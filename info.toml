@@ -1,0 +1,8 @@
+[meta]
+name = "Vehicle state"
+author = "Miss"
+category = "Developer"
+
+[script]
+exports = [ "Export.as" ]
+shared_exports = [ "StateWrappers.as" ]
