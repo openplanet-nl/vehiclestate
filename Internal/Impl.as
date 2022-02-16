@@ -62,6 +62,9 @@ namespace VehicleState
 	{
 		auto app = GetApp();
 		auto vis = ViewingPlayerVis();
+		if (vis is null) {
+			return null;
+		}
 
 #if TMNEXT
 		uint entityId = VehicleState::GetEntityId(vis);
