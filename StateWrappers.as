@@ -26,6 +26,8 @@ shared class CSceneVehicleVisState
 	vec3 get_Position() { if (m_scriptapi is null) { return vec3(); } return m_scriptapi.Position; }
 	vec3 get_WorldVel() { return vec3(); }
 
+	float get_GroundDist() { return 0; }
+
 	float get_FLWheelRot() { return 0; }
 	float get_FLWheelRotSpeed() { return 0; }
 	float get_FLSteerAngle() { return 0; }
@@ -72,6 +74,8 @@ shared class CSceneVehicleVisState
 
 	vec3 get_Position() { if (m_vis is null) { return vec3(); } return Dev::GetOffsetVec3(m_vis, 0xC4); }
 	vec3 get_WorldVel() { if (m_vis is null) { return vec3(); } return Dev::GetOffsetVec3(m_vis, 0xD0); }
+
+	float get_GroundDist() { return 0; }
 
 	float get_FLWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x100); }
 	float get_FLWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x104); }

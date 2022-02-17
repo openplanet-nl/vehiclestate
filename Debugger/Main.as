@@ -134,6 +134,7 @@ namespace VehicleDebugger
 		UI::LabelText("GroundDist", "" + state.GroundDist);
 		UI::LabelText("FrontSpeed", "" + state.FrontSpeed);
 
+#if TMNEXT
 		if (Setting_DisplayExtendedInformation) {
 			UI::LabelText("FLSteerAngle", "" + state.FLSteerAngle);
 			UI::LabelText("FLWheelRot", "" + state.FLWheelRot);
@@ -142,9 +143,8 @@ namespace VehicleDebugger
 			UI::LabelText("FLIcing01", "" + state.FLIcing01);
 			UI::LabelText("FLTireWear01", "" + state.FLTireWear01);
 			UI::LabelText("FLBreakNormedCoef", "" + state.FLBreakNormedCoef);
-
-			UI::LabelText("IsTurbo", state.IsTurbo ? "true: " + (1.0f - state.TurboTime) : "false");
 		}
+#endif
 	}
 }
 
