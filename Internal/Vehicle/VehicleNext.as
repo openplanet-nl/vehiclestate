@@ -3,7 +3,8 @@ namespace VehicleState
 {
 	// -       ... : 5
 	// - 2021-06-08: 4
-	uint VehiclesManagerIndex = 4;
+	// - 2022-03-18: 11
+	uint VehiclesManagerIndex = 11;
 	uint VehiclesOffset = 0x1C8;
 
 	uint GetPlayerVehicleID(CSmPlayer@ player)
