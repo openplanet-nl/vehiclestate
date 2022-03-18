@@ -9,8 +9,9 @@ namespace VehicleState
 	uint GetPlayerVehicleID(CSmPlayer@ player)
 	{
 		// When Vehicle is null, we're either playing offline, or we're spectating in multiplayer
-		if (player.ScriptAPI.Vehicle !is null) {
-			return player.ScriptAPI.Vehicle.Id.Value;
+		auto scriptPlayer = cast<CSmScriptPlayer>(player.ScriptAPI);
+		if (scriptPlayer !is null && scriptPlayer.Vehicle !is null) {
+			return scriptPlayer.Vehicle.Id.Value;
 		}
 
 		// Without the Vehicle object, we can find the ID at an offset in CSmPlayer
