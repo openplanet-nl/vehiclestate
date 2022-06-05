@@ -2,11 +2,11 @@ namespace VehicleState
 {
 	// Gets the currently viewed player. This can be the local player or the player being spectated.
 #if TMNEXT
-	import CSmPlayer@ ViewingPlayer() from "VehicleState";
+	import CSmPlayer@ GetViewingPlayer() from "VehicleState";
 #elif TURBO
-	import CGameMobil@ ViewingPlayer() from "VehicleState";
+	import CGameMobil@ GetViewingPlayer() from "VehicleState";
 #elif MP4
-	import CGamePlayer@ ViewingPlayer() from "VehicleState";
+	import CGamePlayer@ GetViewingPlayer() from "VehicleState";
 #endif
 
 	// Gets the CSceneVehicleVisState handle for the currently viewed player. Note that this can be a
