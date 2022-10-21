@@ -145,7 +145,7 @@ namespace VehicleState
 				error("Unable to find reflection info for CSceneVehicleVisState!");
 				return 0.0f;
 			}
-			g_offsetEngineRPM = type.GetMember("EngineOn").Offset + 4;
+			g_offsetEngineRPM = type.GetMember("CurGear").Offset - 0xC;
 		}
 
 		return Dev::GetOffsetFloat(vis, g_offsetEngineRPM);
