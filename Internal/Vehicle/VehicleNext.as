@@ -8,7 +8,7 @@ namespace VehicleState
 	// - 2022-07-08: 11
 	uint VehiclesManagerIndex = 11;
 	uint VehiclesOffset = 0x1C8;
-	uint64 VehicleEntityPtr = Dev::FindPattern("60 12 72 4D 54 02 00 00 00 00 00 00 00 00 00 00");
+	uint64 VehicleEntityPtr = Dev::BaseAddress() + 0x01E3F2E8;
 
 	uint GetPlayerVehicleID(CSmPlayer@ player)
 	{
@@ -133,7 +133,6 @@ namespace VehicleState
 		// but all I have are pointers
 		uint spectatingEntityId;
 		if (VehicleEntityPtr == 0) {
-			// error("Unable to find pattern");
 			return null;
 		} else {
 			auto ptr1 = Dev::ReadUInt64(VehicleEntityPtr);
