@@ -8,6 +8,7 @@ namespace VehicleState
 	// - 2022-07-08: 11
 	uint VehiclesManagerIndex = 11;
 	uint VehiclesOffset = 0x1C8;
+	uint64 VehicleEntityPtr = Dev::FindPattern("60 12 72 4D 54 02 00 00 00 00 00 00 00 00 00 00");
 
 	uint GetPlayerVehicleID(CSmPlayer@ player)
 	{
@@ -114,6 +115,46 @@ namespace VehicleState
 		auto vehicles = Dev::GetOffsetNod(vehicleVisMgr, VehiclesOffset);
 		auto nodVehicle = Dev::GetOffsetNod(vehicles, 0);
 		return Dev::ForceCast<CSceneVehicleVis@>(nodVehicle).Get();
+	}
+
+	// Get the spectating vehicle vis state. Otherwise, this returns null.
+	CSceneVehicleVis@ GetSpectatingVis(ISceneVis@ sceneVis)
+	{
+		auto vehicleVisMgr = SceneVis::GetMgr(sceneVis, VehiclesManagerIndex); // NSceneVehicleVis_SMgr
+		if (vehicleVisMgr is null) {
+			return null;
+		}
+
+		if (!CheckValidVehicles(vehicleVisMgr)) {
+			return null;
+		}
+
+		// Would be happy to replace all of this with actual Nods and Offsets
+		// but all I have are pointers
+		uint spectatingEntityId;
+		if (VehicleEntityPtr == 0) {
+			// error("Unable to find pattern");
+			return null;
+		} else {
+			auto ptr1 = Dev::ReadUInt64(VehicleEntityPtr);
+			auto ptr2 = Dev::ReadUInt64(ptr1 + 0x2B8);
+			spectatingEntityId = Dev::ReadUInt32(ptr2 + 0x44);
+			if (!(spectatingEntityId & 0xFF000000 == 0x04000000 || spectatingEntityId & 0xFF000000 == 0x02000000)) {
+				return null;
+			}
+		}
+
+		auto vehiclesCount = Dev::GetOffsetUint32(vehicleVisMgr, VehiclesOffset + 0x8);
+		auto vehicles = Dev::GetOffsetNod(vehicleVisMgr, VehiclesOffset);
+		for (uint i = 0; i < vehiclesCount; i++) {
+			auto nodVehicle = Dev::GetOffsetNod(vehicles, i * 0x8);
+			if (Dev::GetOffsetUint32(nodVehicle, 0) != spectatingEntityId) {
+				continue;
+			}
+			return Dev::ForceCast<CSceneVehicleVis@>(nodVehicle).Get();
+		}
+
+		return null;
 	}
 
 	// Get all vehicle vis states. Mostly used for debugging.

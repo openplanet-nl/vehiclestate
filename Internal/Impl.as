@@ -52,7 +52,11 @@ namespace VehicleState
 		if (player !is null) {
 			@vis = VehicleState::GetVis(sceneVis, player);
 		} else {
-			@vis = VehicleState::GetSingularVis(sceneVis);
+			@vis = VehicleState::GetSpectatingVis(sceneVis);
+			// will leave this here for backup in case pointers fail
+			if (vis is null) {
+				@vis = VehicleState::GetSingularVis(sceneVis);
+			}
 		}
 
 		return vis;
