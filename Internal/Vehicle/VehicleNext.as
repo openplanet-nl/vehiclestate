@@ -8,7 +8,9 @@ namespace VehicleState
 	// - 2022-07-08: 11
 	uint VehiclesManagerIndex = 11;
 	uint VehiclesOffset = 0x1C8;
-	uint64 VehicleEntityPtr = Dev::BaseAddress() + 0x01E3F2E8;
+
+	// we really want the address 0x8 before pattern, but first byte at address changes between startups
+	uint64 VehicleEntityPtr = Dev::FindPattern("B0 49 BC 5A F7 7F 00 00 10 43 35 5A F7 7F 00 00 00 43 35 5A F7 7F 00 00") - 0x8;
 
 	uint GetPlayerVehicleID(CSmPlayer@ player)
 	{
