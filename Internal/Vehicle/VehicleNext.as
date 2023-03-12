@@ -10,7 +10,7 @@ namespace VehicleState
 	uint VehiclesOffset = 0x1C8;
 
 	// we really want the address 0x8 before pattern, but first byte at address changes between startups
-	uint64 VehicleEntityPtr = Dev::FindPattern("B0 49 BC 5A F7 7F 00 00 10 43 35 5A F7 7F 00 00 00 43 35 5A F7 7F 00 00") - 0x8;
+	uint64 VehicleEntityPtr = Dev::FindPattern("B0 49 BC 5A F7 7F 00 00 10 43 35 5A F7 7F 00 00 00 43 35 5A F7 7F 00 00");
 
 	uint GetPlayerVehicleID(CSmPlayer@ player)
 	{
@@ -137,7 +137,7 @@ namespace VehicleState
 		if (VehicleEntityPtr == 0) {
 			return null;
 		} else {
-			auto ptr1 = Dev::ReadUInt64(VehicleEntityPtr);
+			auto ptr1 = Dev::ReadUInt64(VehicleEntityPtr - 0x8);
 			auto ptr2 = Dev::ReadUInt64(ptr1 + 0x2B8);
 			spectatingEntityId = Dev::ReadUInt32(ptr2 + 0x44);
 			if (!(spectatingEntityId & 0xFF000000 == 0x04000000 || spectatingEntityId & 0xFF000000 == 0x02000000)) {
