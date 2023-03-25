@@ -1,9 +1,16 @@
 #if TMNEXT
 namespace SceneVis
 {
-	// Gets a scene manager by its index. Prefer to use this instead of FindMgr, if you know the
+	class MetaPtr
+	{
+		CMwNod@ m_ptr; // Not necessarily CMwNod@
+		string m_className;
+		const Reflection::MwClassInfo@ m_classInfo;
+	}
+
+	// Gets a scene manager by its index. Prefer to use this instead of GetManagers, if you know the
 	// index.
-	CMwNod@ GetMgr(ISceneVis@ sceneVis, uint index)
+	CMwNod@ GetManager(ISceneVis@ sceneVis, uint index)
 	{
 		uint managerCount = Dev::GetOffsetUint32(sceneVis, 0x8);
 		if (index > managerCount) {
@@ -14,49 +21,45 @@ namespace SceneVis
 		return Dev::GetOffsetNod(sceneVis, 0x10 + index * 0x8);
 	}
 
-	// Get the number of managers available.
-	uint GetMgrCount(ISceneVis@ sceneVis)
+	// Get all managers
+	array<MetaPtr@> GetManagers(ISceneVis@ sceneVis)
 	{
-		return Dev::GetOffsetUint32(sceneVis, 0x8);
-	}
+		if (sceneVis is null) {
+			return {};
+		}
 
-	// Looks up a manager by its type ID. Prefer to use GetMgr if you can.
-	CMwNod@ FindMgr(ISceneVis@ sceneVis, uint classID)
-	{
-		uint sceneVisManagersOffset = 0x2C0;
-		auto sceneVisManagers = Dev::GetOffsetNod(sceneVis, sceneVisManagersOffset);
-		auto sceneVisManagersCount = Dev::GetOffsetUint32(sceneVis, sceneVisManagersOffset + 0x8);
+		uint sceneVisManagersOffset = 0x290;
+		auto sceneVisManagersCount = Dev::GetOffsetUint32(sceneVis, sceneVisManagersOffset);
+
+		array<MetaPtr@> ret;
+		while (ret.Length < sceneVisManagersCount) {
+			ret.InsertLast(MetaPtr());
+		}
 
 		for (uint i = 0; i < sceneVisManagersCount; i++) {
-			uint offset = i * 0x18;
-			auto mgrClassID = Dev::GetOffsetUint32(sceneVisManagers, offset);
-			if (mgrClassID == classID) {
-				return Dev::GetOffsetNod(sceneVisManagers, offset + 0x8);
+			auto mp = ret[i];
+
+			uint offset = sceneVisManagersOffset + 0x8 + i * 0x10;
+
+			auto ptr = Dev::GetOffsetNod(sceneVis, offset);
+			if (ptr is null) {
+				continue;
 			}
-		}
 
-		return null;
-	}
+			@mp.m_ptr = ptr;
 
-	// Get all manager class ID's.
-	array<uint> GetMgrClassIds(ISceneVis@ sceneVis)
-	{
-		array<uint> ret;
-
-		uint managerCount = GetMgrCount(sceneVis);
-		while (ret.Length < managerCount) {
-			ret.InsertLast(0);
-		}
-
-		uint sceneVisManagersOffset = 0x2C0;
-		auto sceneVisManagers = Dev::GetOffsetNod(sceneVis, sceneVisManagersOffset);
-		auto sceneVisManagersCount = Dev::GetOffsetUint32(sceneVis, sceneVisManagersOffset + 0x8);
-
-		for (uint i = 0; i < sceneVisManagersCount; i++) {
-			uint offset = i * 0x18;
-			auto mgrClassID = Dev::GetOffsetUint32(sceneVisManagers, offset);
-			auto mgrIndex = Dev::GetOffsetUint32(sceneVisManagers, offset + 0x10);
-			ret[mgrIndex] = mgrClassID;
+			auto ptrClassName = Dev::GetOffsetNod(sceneVis, offset + 0x8);
+			if (ptrClassName !is null) {
+				auto ptrClassNameString = Dev::GetOffsetUint64(ptrClassName, 0);
+				if (ptrClassNameString == 0) {
+					continue;
+				}
+				mp.m_className = Dev::ReadCString(ptrClassNameString);
+				@mp.m_classInfo = Reflection::GetType(mp.m_className.Replace("::", "_"));
+			} else {
+				@mp.m_classInfo = Reflection::TypeOf(ptr);
+				mp.m_className = mp.m_classInfo.Name;
+			}
 		}
 
 		return ret;

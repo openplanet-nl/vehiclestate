@@ -6,8 +6,11 @@ namespace VehicleState
 	// - 2022-03-18: 11
 	// - 2022-03-31: 12
 	// - 2022-07-08: 11
-	uint VehiclesManagerIndex = 11;
-	uint VehiclesOffset = 0x1C8;
+	// - 2023-03-03: 12
+	uint VehiclesManagerIndex = 12;
+	// -        ...: 0x1C8
+	// - 2023-03-03: 0x1E0
+	uint VehiclesOffset = 0x1E0;
 
 	uint GetPlayerVehicleID(CSmPlayer@ player)
 	{
@@ -66,7 +69,7 @@ namespace VehicleState
 	{
 		uint vehicleEntityId = GetPlayerVehicleID(player);
 
-		auto vehicleVisMgr = SceneVis::GetMgr(sceneVis, VehiclesManagerIndex); // NSceneVehicleVis_SMgr
+		auto vehicleVisMgr = SceneVis::GetManager(sceneVis, VehiclesManagerIndex); // NSceneVehicleVis_SMgr
 		if (vehicleVisMgr is null) {
 			return null;
 		}
@@ -97,7 +100,7 @@ namespace VehicleState
 	// Get the only existing vehicle vis state, if there is only one. Otherwise, this returns null.
 	CSceneVehicleVis@ GetSingularVis(ISceneVis@ sceneVis)
 	{
-		auto vehicleVisMgr = SceneVis::GetMgr(sceneVis, VehiclesManagerIndex); // NSceneVehicleVis_SMgr
+		auto vehicleVisMgr = SceneVis::GetManager(sceneVis, VehiclesManagerIndex); // NSceneVehicleVis_SMgr
 		if (vehicleVisMgr is null) {
 			return null;
 		}
@@ -121,7 +124,7 @@ namespace VehicleState
 	{
 		array<CSceneVehicleVis@> ret;
 
-		auto vehicleVisMgr = SceneVis::GetMgr(sceneVis, VehiclesManagerIndex); // NSceneVehicleVis_SMgr
+		auto vehicleVisMgr = SceneVis::GetManager(sceneVis, VehiclesManagerIndex); // NSceneVehicleVis_SMgr
 		if (vehicleVisMgr !is null && CheckValidVehicles(vehicleVisMgr)) {
 			auto vehicles = Dev::GetOffsetNod(vehicleVisMgr, VehiclesOffset);
 			auto vehiclesCount = Dev::GetOffsetUint32(vehicleVisMgr, VehiclesOffset + 0x8);
