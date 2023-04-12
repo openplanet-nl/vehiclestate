@@ -129,7 +129,6 @@ namespace VehicleState
 
 		if (mgr !is null && CheckValidVehicles(mgr)) {
 			auto vehiclesCount = GetVisCount(mgr);
-			// auto vehicles = Dev::GetOffsetUint32(mgr, VehiclesOffset);
 			for (uint i = 0; i < vehiclesCount; i++) {
 				ret.InsertLast(CSceneVehicleVisInner(VehicleState::_GetVisNodAt(mgr, i)));
 			}
