@@ -38,7 +38,7 @@ namespace VehicleState
 		auto app = GetApp();
 
 #if MP4
-		CGameScene@ sceneVis = null;
+		CGameScene@ sceneVis = app.GameScene;
 		CSceneVehicleVisInner@ vis = null;
 #else
 		auto sceneVis = app.GameScene;
@@ -48,12 +48,16 @@ namespace VehicleState
 		CSceneVehicleVis@ vis = null;
 #endif
 
+#if MP4
+		@vis = GetVisWithId(GetViewingVisId());
+#else
 		auto player = GetViewingPlayer();
 		if (player !is null) {
 			@vis = VehicleState::GetVis(sceneVis, player);
 		} else {
 			@vis = VehicleState::GetSingularVis(sceneVis);
 		}
+#endif
 
 		return vis;
 	}

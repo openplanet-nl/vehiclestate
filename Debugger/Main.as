@@ -10,7 +10,7 @@ namespace VehicleDebugger
 				UI::EndTabItem();
 			}
 
-#if TMNEXT
+#if TMNEXT || MP4
 			if (UI::BeginTabItem(Icons::Kenney::Users + " Player states")) {
 				TabPlayerStates();
 				UI::EndTabItem();
@@ -41,7 +41,7 @@ namespace VehicleDebugger
 		RenderVehicleState(vehicle);
 	}
 
-#if TMNEXT
+#if TMNEXT || MP4
 	void TabPlayerStates()
 	{
 		auto app = GetApp();
@@ -59,7 +59,11 @@ namespace VehicleDebugger
 		}
 
 		for (uint i = 0; i < pg.Players.Length; i++) {
+#if TMNEXT
 			auto player = cast<CSmPlayer>(pg.Players[i]);
+#elif MP4
+			auto player = cast<CTrackManiaPlayer>(pg.Players[i]);
+#endif
 			if (player is null) {
 				continue;
 			}
@@ -72,6 +76,7 @@ namespace VehicleDebugger
 			UI::PushID(player.User.Name);
 
 			if (UI::CollapsingHeader(player.User.Name)) {
+				UI::LabelText("Entity ID", Text::Format("%08x", VehicleState::GetEntityId(vehicle)));
 				RenderVehicleState(vehicle);
 			}
 
@@ -134,15 +139,24 @@ namespace VehicleDebugger
 		UI::LabelText("GroundDist", "" + state.GroundDist);
 		UI::LabelText("FrontSpeed", "" + state.FrontSpeed);
 
-#if TMNEXT
+#if TMNEXT || MP4
 		if (Setting_DisplayExtendedInformation) {
+			UI::LabelText("Position", state.Position.ToString());
+			UI::LabelText("Dir", state.Dir.ToString());
+			UI::LabelText("FLDamperLen", "" + state.FLDamperLen);
 			UI::LabelText("FLSteerAngle", "" + state.FLSteerAngle);
 			UI::LabelText("FLWheelRot", "" + state.FLWheelRot);
 			UI::LabelText("FLSlipCoef", "" + state.FLSlipCoef);
+#if TMNEXT
 			UI::LabelText("FL Dirt", "" + VehicleState::GetWheelDirt(state, 0));
 			UI::LabelText("FLIcing01", "" + state.FLIcing01);
 			UI::LabelText("FLTireWear01", "" + state.FLTireWear01);
 			UI::LabelText("FLBreakNormedCoef", "" + state.FLBreakNormedCoef);
+#elif MP4
+			UI::LabelText("FLGroundContactMaterial", "" + tostring(state.FLGroundContactMaterial));
+			UI::LabelText("FLIsWet", "" + state.FLIsWet);
+			UI::LabelText("FLGroundContact", "" + state.FLGroundContact);
+#endif
 		}
 #endif
 	}

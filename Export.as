@@ -1,11 +1,13 @@
 namespace VehicleState
 {
-	// Gets the currently viewed player. This can be the local player or the player being spectated.
 #if TMNEXT
+	// Gets the currently viewed player. This can be the local player or the player being spectated.
 	import CSmPlayer@ GetViewingPlayer() from "VehicleState";
 #elif TURBO
+	// Gets the currently viewed player. This can be the local player or the player being spectated.
 	import CGameMobil@ GetViewingPlayer() from "VehicleState";
 #elif MP4
+	// Gets the currently viewed player. This will always be the local player.
 	import CGamePlayer@ GetViewingPlayer() from "VehicleState";
 #endif
 
@@ -35,5 +37,16 @@ namespace VehicleState
 
 	// Get all vehicle vis states. Mostly used for debugging.
 	import array<CSceneVehicleVis@> GetAllVis(ISceneVis@ sceneVis) from "VehicleState";
+#endif
+
+#if MP4
+	// Get vehicle vis from a given player.
+	import CSceneVehicleVisState@ GetVis(CGameScene@ sceneVis, CGamePlayer@ player) from "VehicleState";
+
+	// Get the only existing vehicle vis state, if there is only one. Otherwise, this returns null.
+	import CSceneVehicleVisState@ GetSingularVis(CGameScene@ sceneVis) from "VehicleState";
+
+	// Get all vehicle vis states. Mostly used for debugging.
+	import array<CSceneVehicleVisState@> GetAllVis(CGameScene@ sceneVis) from "VehicleState";
 #endif
 }

@@ -65,4 +65,18 @@ namespace SceneVis
 		return ret;
 	}
 }
+
+#elif MP4
+
+namespace SceneVis
+{
+	CSceneMgrVehicleVisImpl@ GetManager(CGameScene@ scene)
+	{
+		if (scene is null || scene.MgrVehicleVis is null) {
+			return null;
+		}
+		return scene.MgrVehicleVis.Impl;
+	}
+}
+
 #endif
