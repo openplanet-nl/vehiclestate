@@ -70,7 +70,7 @@ namespace SceneVis
 
 namespace SceneVis
 {
-	CSceneMgrVehicleVisImpl@ GetManager(CGameScene@ scene)
+	CSceneMgrVehicleVisImpl@ GetVehicleVisManager(CGameScene@ scene)
 	{
 		if (scene is null || scene.MgrVehicleVis is null) {
 			return null;

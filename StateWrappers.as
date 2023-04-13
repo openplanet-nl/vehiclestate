@@ -1,5 +1,8 @@
 #if MP4
 
+// Note: these and the other offsets (except for .EntityId) are for a CSceneVehicleVis,
+// not CSceneVehicleVisState (which is an internal part of CSceneVehicleVis).
+
 const uint WheelsStartOffset = 0x53C;
 const uint WheelStructLength = 0x24;
 
@@ -23,6 +26,7 @@ shared class CSceneVehicleVisState
 		@this.m_vis = m_vis;
 	}
 
+	// This provides compatibility with the TMNEXT API when using functions like `GetAllVis`
 	CSceneVehicleVisState@ get_AsyncState()
 	{
 		return this;
@@ -92,8 +96,8 @@ shared class CSceneVehicleVisState
 	uint get_ActiveEffects() { if (m_vis is null) { return 0; } return Dev::GetOffsetUint32(m_vis, 0x630); }
 
 	bool get_TurboActive()  { if (m_vis is null) { return false; } return Dev::GetOffsetFloat(m_vis, 0x824) == 1.0; }
-	float get_TurboPct()  { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x830); }
-	float get_GearPct()  { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x83C); }
+	float get_TurboPercent()  { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x830); }
+	float get_GearPercent()  { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x83C); }
 }
 
 #elif TURBO
