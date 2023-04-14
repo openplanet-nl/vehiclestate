@@ -109,7 +109,7 @@ namespace VehicleDebugger
 #endif
 
 #if MP4
-	void RenderVehicleState(CSceneVehicleVisInner@ vehicle)
+	void RenderVehicleState(CSceneVehicleVisState@ vehicle)
 #else
 	void RenderVehicleState(CSceneVehicleVis@ vehicle)
 #endif

@@ -39,21 +39,21 @@ namespace VehicleState
 	uint VehiclesOffset = 0x38;
 
 	// Get vehicle vis from a given player.
-	CSceneVehicleVisInner@ GetVis(CGameScene@ sceneVis, CGamePlayer@ player)
+	CSceneVehicleVisState@ GetVis(CGameScene@ sceneVis, CGamePlayer@ player)
 	{
 		if (player is null) {
 			return null;
 		}
-		return CSceneVehicleVisInner(player);
+		return CSceneVehicleVisInner(player).AsyncState;
 	}
 
 	// Get the only existing vehicle vis state, if there is only one. Otherwise, this returns null.
-	CSceneVehicleVisInner@ GetSingularVis(CGameScene@ sceneVis)
+	CSceneVehicleVisState@ GetSingularVis(CGameScene@ sceneVis)
 	{
 		auto mgr = SceneVis::GetVehicleVisManager(sceneVis);
 
 		if (CheckValidVehicles(mgr) && GetVisCount(mgr) == 1) {
-			return CSceneVehicleVisInner(mgr, 0);
+			return CSceneVehicleVisInner(mgr, 0).AsyncState;
 		}
 
 		return null;
@@ -126,15 +126,15 @@ namespace VehicleState
 	}
 
 	// Get all vehicle vis states. Mostly used for debugging.
-	array<CSceneVehicleVisInner@> GetAllVis(CGameScene@ sceneVis)
+	array<CSceneVehicleVisState@> GetAllVis(CGameScene@ sceneVis)
 	{
-		array<CSceneVehicleVisInner@> ret;
+		array<CSceneVehicleVisState@> ret;
 		auto mgr = SceneVis::GetVehicleVisManager(sceneVis);
 
 		if (mgr !is null && CheckValidVehicles(mgr)) {
 			auto vehiclesCount = GetVisCount(mgr);
 			for (uint i = 0; i < vehiclesCount; i++) {
-				ret.InsertLast(CSceneVehicleVisInner(VehicleState::GetVisNodAt(mgr, i)));
+				ret.InsertLast(CSceneVehicleVisInner(VehicleState::GetVisNodAt(mgr, i)).AsyncState);
 			}
 		}
 
@@ -158,6 +158,12 @@ namespace VehicleState
 	uint GetEntityId(CSceneVehicleVisInner@ vis)
 	{
 		return vis.GetEntityId();
+	}
+
+	// Get entity ID of the given vehicle vis.
+	uint GetEntityId(CSceneVehicleVisState@ vis)
+	{
+		return Dev::GetOffsetUint32(vis.m_vis, 0);
 	}
 }
 #endif
