@@ -1,1 +1,3 @@
 *.sig
+*.sh
+.vscode/**/*

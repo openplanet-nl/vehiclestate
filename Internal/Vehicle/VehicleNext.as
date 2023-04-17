@@ -42,15 +42,14 @@ namespace VehicleState
 
 	bool CheckValidVehicles(CMwNod@ vehicleVisMgr)
 	{
-		auto ptr = Dev::GetOffsetUint64(vehicleVisMgr, VehiclesOffset);
-		auto count = Dev::GetOffsetUint32(vehicleVisMgr, VehiclesOffset + 0x8);
-
 		// Ensure this is a valid pointer
+		auto ptr = Dev::GetOffsetUint64(vehicleVisMgr, VehiclesOffset);
 		if ((ptr & 0xF) != 0) {
 			return false;
 		}
 
 		// Assume we can't have more than 1000 vehicles
+		auto count = Dev::GetOffsetUint32(vehicleVisMgr, VehiclesOffset + 0x8);
 		if (count > 1000) {
 			return false;
 		}
