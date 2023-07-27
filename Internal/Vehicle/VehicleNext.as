@@ -66,8 +66,12 @@ namespace VehicleState
 	// Get vehicle vis from a given player.
 	CSceneVehicleVis@ GetVis(ISceneVis@ sceneVis, CSmPlayer@ player)
 	{
-		uint vehicleEntityId = GetPlayerVehicleID(player);
+		return GetVis(sceneVis, GetPlayerVehicleID(player));
+	}
 
+	// Get vehicle vis with a given entity ID.
+	CSceneVehicleVis@ GetVis(ISceneVis@ sceneVis, uint vehicleEntityId)
+	{
 		auto vehicleVisMgr = SceneVis::GetManager(sceneVis, VehiclesManagerIndex); // NSceneVehicleVis_SMgr
 		if (vehicleVisMgr is null) {
 			return null;
