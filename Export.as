@@ -29,6 +29,20 @@ namespace VehicleState
 	//  3 = Rear Right
 	import float GetWheelDirt(CSceneVehicleVisState@ vis, int w) from "VehicleState";
 
+	// Get wheel falling state, and if in water. For w, use one of the following:
+	//  0 = Front Left
+	//  1 = Front Right
+	//  2 = Rear Left
+	//  3 = Rear Right
+	import FallingState GetWheelFalling(CSceneVehicleVisState@ vis, int w) from "VehicleState";
+
+	// Get the last turbo level that the vehicle touched.
+	import TurboLevel GetLastTurboLevel(CSceneVehicleVisState@ vis) from "VehicleState";
+
+	// Get a timer which counts from 0.0 to 1.0 in the final second of reactor boost.
+	// Doesn't seem to work when watching a replay.
+	import float GetReactorFinalTimer(CSceneVehicleVisState@ vis) from "VehicleState";
+
 	// Get vehicle vis from a given player.
 	import CSceneVehicleVis@ GetVis(ISceneVis@ sceneVis, CSmPlayer@ player) from "VehicleState";
 

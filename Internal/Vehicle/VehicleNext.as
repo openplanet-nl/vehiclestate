@@ -190,9 +190,72 @@ namespace VehicleState
 		return Dev::GetOffsetFloat(vis, g_offsetSideSpeed);
 	}
 
+	// Get wheel falling state, and if in water. For w, use one of the following:
+	//  0 = Front Left
+	//  1 = Front Right
+	//  2 = Rear Left
+	//  3 = Rear Right
+	FallingState GetWheelFalling(CSceneVehicleVisState@ vis, int w)
+	{
+		if (g_offsetWheelFalling.Length == 0) {
+			auto type = Reflection::GetType("CSceneVehicleVisState");
+			if (type is null) {
+				error("Unable to find reflection info for CSceneVehicleVisState!");
+				return FallingState(0);
+			}
+			g_offsetWheelFalling.InsertLast(type.GetMember("FLBreakNormedCoef").Offset + 4);
+			g_offsetWheelFalling.InsertLast(type.GetMember("FRBreakNormedCoef").Offset + 4);
+			g_offsetWheelFalling.InsertLast(type.GetMember("RLBreakNormedCoef").Offset + 4);
+			g_offsetWheelFalling.InsertLast(type.GetMember("RRBreakNormedCoef").Offset + 4);
+		}
+
+		int state = Dev::GetOffsetInt32(vis, g_offsetWheelFalling[w]);
+		array<int> states = {0, 2, 4, 6};
+		if (states.Find(state) == -1)
+			return FallingState(0);
+		return FallingState(state);
+	}
+
+	// Get the last turbo level that the vehicle touched.
+	TurboLevel GetLastTurboLevel(CSceneVehicleVisState@ vis)
+	{
+		if (g_offsetLastTurboLevel == 0) {
+			auto type = Reflection::GetType("CSceneVehicleVisState");
+			if (type is null) {
+				error("Unable to find reflection info for CSceneVehicleVisState!");
+				return TurboLevel(0);
+			}
+			g_offsetLastTurboLevel = type.GetMember("ReactorBoostLvl").Offset - 4;
+		}
+
+		uint level = Dev::GetOffsetUint32(vis, g_offsetLastTurboLevel);
+		if (level < 1 || level > 5)
+			return TurboLevel(0);
+		return TurboLevel(level);
+	}
+
+	// Get a timer which counts from 0.0 to 1.0 in the final second of reactor boost.
+	// Doesn't seem to work when watching a replay.
+	float GetReactorFinalTimer(CSceneVehicleVisState@ vis)
+	{
+		if (g_offsetReactorFinalTimer == 0) {
+			auto type = Reflection::GetType("CSceneVehicleVisState");
+			if (type is null) {
+				error("Unable to find reflection info for CSceneVehicleVisState!");
+				return 0.0f;
+			}
+			g_offsetReactorFinalTimer = type.GetMember("ReactorBoostType").Offset + 4;
+		}
+
+		return Dev::GetOffsetFloat(vis, g_offsetReactorFinalTimer);
+	}
+
 	uint16 g_offsetSpawnableObjectModelIndex = 0;
 	uint16 g_offsetEngineRPM = 0;
 	array<uint16> g_offsetWheelDirt;
 	uint16 g_offsetSideSpeed = 0;
+	array<uint16> g_offsetWheelFalling;
+	uint16 g_offsetLastTurboLevel = 0;
+	uint16 g_offsetReactorFinalTimer = 0;
 }
 #endif
