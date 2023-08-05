@@ -36,7 +36,8 @@ namespace VehicleState
 	//  3 = Rear Right
 	import FallingState GetWheelFalling(CSceneVehicleVisState@ vis, int w) from "VehicleState";
 
-	// Get the last turbo level that the vehicle touched.
+	// Get the last turbo level that the vehicle touched. This will return the last level
+	// even if the vehicle is not currently in contact with a turbo gate/surface.
 	import TurboLevel GetLastTurboLevel(CSceneVehicleVisState@ vis) from "VehicleState";
 
 	// Get a timer which counts from 0.0 to 1.0 in the final second of reactor boost.

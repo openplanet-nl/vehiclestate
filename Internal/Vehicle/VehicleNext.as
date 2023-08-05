@@ -216,7 +216,8 @@ namespace VehicleState
 		return FallingState(state);
 	}
 
-	// Get the last turbo level that the vehicle touched.
+	// Get the last turbo level that the vehicle touched. This will return the last level
+	// even if the vehicle is not currently in contact with a turbo gate/surface.
 	TurboLevel GetLastTurboLevel(CSceneVehicleVisState@ vis)
 	{
 		if (g_offsetLastTurboLevel == 0) {
