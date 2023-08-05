@@ -195,6 +195,7 @@ namespace VehicleState
 	//  1 = Front Right
 	//  2 = Rear Left
 	//  3 = Rear Right
+	// The value returned seems to always be even (0, 2, 4, 6), but this could break.
 	FallingState GetWheelFalling(CSceneVehicleVisState@ vis, int w)
 	{
 		if (g_offsetWheelFalling.Length == 0) {
