@@ -214,8 +214,9 @@ namespace VehicleState
 
 		int state = Dev::GetOffsetInt32(vis, g_offsetWheelFalling[w]);
 		array<int> states = {0, 2, 4, 6};
-		if (states.Find(state) == -1)
+		if (states.Find(state) == -1) {
 			return FallingState(0);
+		}
 		return FallingState(state);
 	}
 
@@ -233,8 +234,9 @@ namespace VehicleState
 		}
 
 		uint level = Dev::GetOffsetUint32(vis, g_offsetLastTurboLevel);
-		if (level < 1 || level > 5)
+		if (level < 1 || level > 5) {
 			return TurboLevel(0);
+		}
 		return TurboLevel(level);
 	}
 
