@@ -1,4 +1,25 @@
-#if MP4
+#if TMNEXT
+
+namespace VehicleState
+{
+	shared enum FallingState {
+		FallingAir = 0,
+		FallingWater = 2,
+		RestingGround = 4,
+		RestingWater = 6
+	}
+
+	shared enum TurboLevel {
+		None,
+		Normal,
+		Super,
+		RouletteNormal,
+		RouletteSuper,
+		RouletteUltra
+	}
+}
+
+#elif MP4
 
 // Note: these and the other offsets (except for .EntityId) are for a CSceneVehicleVis,
 // not CSceneVehicleVisState (which is an internal part of CSceneVehicleVis).
