@@ -1,3 +1,5 @@
 *.sig
+.manifest
+
 *.sh
 .vscode/**/*
