@@ -153,9 +153,12 @@ namespace VehicleDebugger
 			UI::LabelText("FLTireWear01", "" + state.FLTireWear01);
 			UI::LabelText("FLBreakNormedCoef", "" + state.FLBreakNormedCoef);
 #elif MP4
-			UI::LabelText("FLGroundContactMaterial", "" + tostring(state.FLGroundContactMaterial));
 			UI::LabelText("FLIsWet", "" + state.FLIsWet);
 			UI::LabelText("FLGroundContact", "" + state.FLGroundContact);
+			UI::LabelText("FLGroundContactMaterial", tostring(state.FLGroundContactMaterial));
+			UI::LabelText("FRGroundContactMaterial", tostring(state.FRGroundContactMaterial));
+			UI::LabelText("RLGroundContactMaterial", tostring(state.RLGroundContactMaterial));
+			UI::LabelText("RRGroundContactMaterial", tostring(state.RRGroundContactMaterial));
 #endif
 		}
 #endif
