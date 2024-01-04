@@ -77,6 +77,11 @@ namespace VehicleDebugger
 
 			if (UI::CollapsingHeader(player.User.Name)) {
 				UI::LabelText("Entity ID", Text::Format("%08x", VehicleState::GetEntityId(vehicle)));
+				UI::LabelText("Entity ID from player", Text::Format("%08x", VehicleState::GetPlayerVehicleID(player)));
+				if (UI::Button("Player nod")) {
+					ExploreNod(player);
+				}
+				UI::SameLine();
 				RenderVehicleState(vehicle);
 			}
 
