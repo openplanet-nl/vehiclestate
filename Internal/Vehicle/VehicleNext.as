@@ -27,7 +27,7 @@ namespace VehicleState
 			if (type is null) {
 				error("Unable to find reflection info for CSmPlayer!");
 			}
-			g_offsetSpawnableObjectModelIndex = type.GetMember("SpawnableObjectModelIndex").Offset - 0x20;
+			g_offsetSpawnableObjectModelIndex = type.GetMember("SpawnableObjectModelIndex").Offset - 0x14;
 		}
 
 		// Get the ID and make sure it actually matches the 0x02000000 mask
