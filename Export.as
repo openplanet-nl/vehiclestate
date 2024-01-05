@@ -65,4 +65,9 @@ namespace VehicleState
 	// Get all vehicle vis states. Mostly used for debugging.
 	import array<CSceneVehicleVisState@> GetAllVis(CGameScene@ sceneVis) from "VehicleState";
 #endif
+
+	// Register a callback for late in the process when a vehicle state is updated.
+	import void RegisterOnVehicleStateUpdateCallback(OnVehicleStateUpdated@ func) from "VehicleState";
+	// Deregister all callbacks from the calling plugin.
+	import void DeregisterVehicleStateUpdateCallbacks() from "VehicleState";
 }

@@ -77,7 +77,9 @@ namespace VehicleDebugger
 
 			if (UI::CollapsingHeader(player.User.Name)) {
 				UI::LabelText("Entity ID", Text::Format("%08x", VehicleState::GetEntityId(vehicle)));
+#if TMNEXT
 				UI::LabelText("Entity ID from player", Text::Format("%08x", VehicleState::GetPlayerVehicleID(player)));
+#endif
 				if (UI::Button("Player nod")) {
 					ExploreNod(player);
 				}
@@ -166,6 +168,13 @@ namespace VehicleDebugger
 			UI::LabelText("RRGroundContactMaterial", tostring(state.RRGroundContactMaterial));
 #endif
 		}
+#elif TURBO
+	UI::LabelText("FLWheelRot", "" + state.FLWheelRot);
+	UI::LabelText("FLWheelRotSpeed", "" + state.FLWheelRotSpeed);
+	UI::LabelText("FLSteerAngle", "" + state.FLSteerAngle);
+	UI::LabelText("FLGroundContact", "" + state.FLGroundContact);
+	UI::LabelText("FLGroundContactRaw", "" + state.FLGroundContactRaw);
+	UI::LabelText("FLSlipCoef", "" + state.FLSlipCoef);
 #endif
 	}
 }
