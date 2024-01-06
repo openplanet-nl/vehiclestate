@@ -257,6 +257,22 @@ namespace VehicleState
 		return Dev::GetOffsetFloat(vis, g_offsetReactorFinalTimer);
 	}
 
+	// Get the current speed displayed on the back of the car if under the influence of Cruise Control.
+	// If not in Cruise Control, returns 0.
+	int GetCruiseDisplaySpeed(CSceneVehicleVisState@ vis)
+	{
+		if (g_offsetCruiseDisplaySpeed == 0) {
+			auto type = Reflection::GetType("CSceneVehicleVisState");
+			if (type is null) {
+				error("Unable to find reflection info for CSceneVehicleVisState!");
+				return 0;
+			}
+			g_offsetCruiseDisplaySpeed = type.GetMember("FrontSpeed").Offset + 12;
+		}
+
+		return Dev::GetOffsetInt32(vis, g_offsetCruiseDisplaySpeed);
+	}
+
 	uint16 g_offsetPlayerVehicleID = 0;
 	uint16 g_offsetEngineRPM = 0;
 	array<uint16> g_offsetWheelDirt;
@@ -264,5 +280,6 @@ namespace VehicleState
 	array<uint16> g_offsetWheelFalling;
 	uint16 g_offsetLastTurboLevel = 0;
 	uint16 g_offsetReactorFinalTimer = 0;
+	uint16 g_offsetCruiseDisplaySpeed = 0;
 }
 #endif
