@@ -47,6 +47,10 @@ namespace VehicleState
 	// Doesn't seem to work when watching a replay.
 	import float GetReactorFinalTimer(CSceneVehicleVisState@ vis) from "VehicleState";
 
+	// Get the current speed displayed on the back of the car if under the influence of Cruise Control.
+	// If not in Cruise Control, returns 0.
+	import int GetCruiseDisplaySpeed(CSceneVehicleVisState@ vis) from "VehicleState";
+
 	// Get vehicle vis from a given player.
 	import CSceneVehicleVis@ GetVis(ISceneVis@ sceneVis, CSmPlayer@ player) from "VehicleState";
 
