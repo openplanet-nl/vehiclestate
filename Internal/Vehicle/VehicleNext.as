@@ -32,7 +32,6 @@ namespace VehicleState
 
 		// Get the ID and make sure it actually matches the 0x02000000 mask
 		uint maybeID = Dev::GetOffsetUint32(player, g_offsetPlayerVehicleID);
-		//print("maybe ID = " + Text::Format("%08x", maybeID));
 		if (maybeID & 0xFFF00000 == 0x02000000) {
 			return maybeID;
 		}
