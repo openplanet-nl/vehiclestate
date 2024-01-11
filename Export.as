@@ -34,7 +34,7 @@ namespace VehicleState
 	//  1 = Front Right
 	//  2 = Rear Left
 	//  3 = Rear Right
-	// The value returned seems to always be even (0, 2, 4, 6), but this may be completely
+	// The value returned seems to always be even (0, 2, 4, 6, 8), but this may be completely
 	// incorrect and give unexpected results. It is only present here because it technically
 	// exists in-game and may be useful to someone.
 	import FallingState GetWheelFalling(CSceneVehicleVisState@ vis, int w) from "VehicleState";

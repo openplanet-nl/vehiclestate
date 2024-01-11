@@ -191,7 +191,7 @@ namespace VehicleState
 		}
 
 		int state = Dev::GetOffsetInt32(vis, g_offsetWheelFalling[w]);
-		array<int> states = {0, 2, 4, 6};
+		array<int> states = {0, 2, 4, 6, 8};
 		if (states.Find(state) == -1) {
 			return FallingState(0);
 		}
