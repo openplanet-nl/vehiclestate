@@ -6,7 +6,8 @@ namespace VehicleState
 		FallingAir = 0,
 		FallingWater = 2,
 		RestingGround = 4,
-		RestingWater = 6
+		RestingWater = 6,
+		GlidingGround = 8
 	}
 
 	shared enum TurboLevel {
