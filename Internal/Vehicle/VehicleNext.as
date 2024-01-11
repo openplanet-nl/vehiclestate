@@ -15,30 +15,7 @@ namespace VehicleState
 
 	uint GetPlayerVehicleID(CSmPlayer@ player)
 	{
-		// When Vehicle is null, we're either playing offline, or we're spectating in multiplayer
-		auto scriptPlayer = cast<CSmScriptPlayer>(player.ScriptAPI);
-		if (scriptPlayer !is null && scriptPlayer.Vehicle !is null) {
-			return scriptPlayer.Vehicle.Id.Value;
-		}
-
-		// Without the Vehicle object, we can find the ID at an offset in CSmPlayer
-		if (g_offsetPlayerVehicleID == 0) {
-			auto type = Reflection::GetType("CSmPlayer");
-			if (type is null) {
-				error("Unable to find reflection info for CSmPlayer!");
-			}
-			g_offsetPlayerVehicleID = type.GetMember("SpawnableObjectModelIndex").Offset - 0x14;
-		}
-
-		// Get the ID and make sure it actually matches the 0x02000000 mask
-		uint maybeID = Dev::GetOffsetUint32(player, g_offsetPlayerVehicleID);
-		//print("maybe ID = " + Text::Format("%08x", maybeID));
-		if (maybeID & 0xFFF00000 == 0x02000000) {
-			return maybeID;
-		}
-
-		// Not found :(
-		return 0;
+		return player.GetCurrentEntityID();
 	}
 
 	bool CheckValidVehicles(CMwNod@ vehicleVisMgr)
