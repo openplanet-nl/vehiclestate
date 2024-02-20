@@ -250,6 +250,31 @@ namespace VehicleState
 		return Dev::GetOffsetInt32(vis, g_offsetCruiseDisplaySpeed);
 	}
 
+	// Get the current vehicle type.
+	VehicleType GetVehicleType(CSceneVehicleVisState@ vis)
+	{
+		if (g_offsetVehicleType == 0) {
+			auto type = Reflection::GetType("CSceneVehicleVisState");
+			if (type is null) {
+				error("Unable to find reflection info for CSceneVehicleVisState!");
+				return VehicleType::Stadium;
+			}
+			g_offsetVehicleType = type.GetMember("InputSteer").Offset - 8;
+		}
+
+		CTrackMania@ App = cast<CTrackMania@>(GetApp());
+		if (App.RootMap !is null) {
+			if (App.RootMap.VehicleName.GetName() == "CarSnow")
+				return VehicleType::Snow;
+			// if (map.VehicleName.GetName() == "CarRally")  // to update when car is added
+			// 	return VehicleType::Rally;
+			// if (map.VehicleName.GetName() == "CarDesert")  // to update when car is added
+			// 	return VehicleType::Desert;
+		}
+
+		return VehicleType(Dev::GetOffsetUint8(vis, g_offsetVehicleType));
+	}
+
 	uint16 g_offsetPlayerVehicleID = 0;
 	uint16 g_offsetEngineRPM = 0;
 	array<uint16> g_offsetWheelDirt;
@@ -258,5 +283,6 @@ namespace VehicleState
 	uint16 g_offsetLastTurboLevel = 0;
 	uint16 g_offsetReactorFinalTimer = 0;
 	uint16 g_offsetCruiseDisplaySpeed = 0;
+	uint16 g_offsetVehicleType = 0;
 }
 #endif

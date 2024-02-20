@@ -51,6 +51,9 @@ namespace VehicleState
 	// If not in Cruise Control, returns 0.
 	import int GetCruiseDisplaySpeed(CSceneVehicleVisState@ vis) from "VehicleState";
 
+	// Get the current vehicle type.
+	import VehicleType GetVehicleType(CSceneVehicleVisState@ vis) from "VehicleState";
+
 	// Get vehicle vis from a given player.
 	import CSceneVehicleVis@ GetVis(ISceneVis@ sceneVis, CSmPlayer@ player) from "VehicleState";
 

@@ -18,6 +18,13 @@ namespace VehicleState
 		RouletteSuper,
 		RouletteUltra
 	}
+
+	shared enum VehicleType {
+		Stadium,
+		Snow,
+		// Rally,  // to update when car is added
+		// Desert  // to update when car is added
+	}
 }
 
 #elif MP4
