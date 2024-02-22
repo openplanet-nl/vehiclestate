@@ -257,7 +257,7 @@ namespace VehicleState
 			auto type = Reflection::GetType("CSceneVehicleVisState");
 			if (type is null) {
 				error("Unable to find reflection info for CSceneVehicleVisState!");
-				return VehicleType::Stadium;
+				return VehicleType::CarSport;
 			}
 			g_offsetVehicleType = type.GetMember("InputSteer").Offset - 8;
 		}
@@ -265,11 +265,11 @@ namespace VehicleState
 		CTrackMania@ App = cast<CTrackMania@>(GetApp());
 		if (App.RootMap !is null) {
 			if (App.RootMap.VehicleName.GetName() == "CarSnow")
-				return VehicleType::Snow;
+				return VehicleType::CarSnow;
 			// if (map.VehicleName.GetName() == "CarRally")  // to update when car is added
-			// 	return VehicleType::Rally;
+			// 	return VehicleType::CarRally;
 			// if (map.VehicleName.GetName() == "CarDesert")  // to update when car is added
-			// 	return VehicleType::Desert;
+			// 	return VehicleType::CarDesert;
 		}
 
 		return VehicleType(Dev::GetOffsetUint8(vis, g_offsetVehicleType));
