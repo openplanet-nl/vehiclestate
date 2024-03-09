@@ -263,16 +263,33 @@ namespace VehicleState
 		}
 
 		CTrackMania@ App = cast<CTrackMania@>(GetApp());
-		if (App.RootMap !is null) {
-			if (App.RootMap.VehicleName.GetName() == "CarSnow")
-				return VehicleType::CarSnow;
-			// if (map.VehicleName.GetName() == "CarRally")  // to update when car is added
-			// 	return VehicleType::CarRally;
-			// if (map.VehicleName.GetName() == "CarDesert")  // to update when car is added
-			// 	return VehicleType::CarDesert;
-		}
+		CSmArenaClient@ Playground = cast<CSmArenaClient@>(App.CurrentPlayground);
+		if (
+			Playground is null
+			|| Playground.Arena is null
+			|| Playground.Arena.Resources is null
+			|| Playground.Arena.Resources.m_AllGameItemModels.Length == 0
+		)
+			return VehicleType::CarSport;
 
-		return VehicleType(Dev::GetOffsetUint8(vis, g_offsetVehicleType));
+		const uint index = Dev::GetOffsetUint8(vis, g_offsetVehicleType);
+
+		try {
+			CGameItemModel@ Model = Playground.Arena.Resources.m_AllGameItemModels[index];
+			if (Model is null)
+				return VehicleType::CarSport;
+
+			if (Model.Name == "CarSport")
+				return VehicleType::CarSport;
+			if (Model.Name == "CarSnow")
+				return VehicleType::CarSport;
+			if (Model.Name == "CarRally")
+				return VehicleType::CarRally;
+			// if (Model.Name == "CarDesert")
+			//     return VehicleType::CarDesert;
+		} catch { }
+
+		return VehicleType::CarSport;
 	}
 
 	uint16 g_offsetPlayerVehicleID = 0;

@@ -22,7 +22,7 @@ namespace VehicleState
 	shared enum VehicleType {
 		CarSport,  // stadium
 		CarSnow,
-		// CarRally,  // to update when car is added
+		CarRally
 		// CarDesert  // to update when car is added
 	}
 }
