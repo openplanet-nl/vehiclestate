@@ -282,7 +282,7 @@ namespace VehicleState
 			if (Model.Name == "CarSport")
 				return VehicleType::CarSport;
 			if (Model.Name == "CarSnow")
-				return VehicleType::CarSport;
+				return VehicleType::CarSnow;
 			if (Model.Name == "CarRally")
 				return VehicleType::CarRally;
 			// if (Model.Name == "CarDesert")
