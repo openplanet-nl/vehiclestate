@@ -274,7 +274,7 @@ namespace VehicleState
 
 		const uint index = Dev::GetOffsetUint8(vis, g_offsetVehicleType);
 
-		try {
+		if (index < Playground.Arena.Resources.m_AllGameItemModels.Length) {
 			CGameItemModel@ Model = Playground.Arena.Resources.m_AllGameItemModels[index];
 			if (Model is null)
 				return VehicleType::CarSport;
@@ -287,7 +287,7 @@ namespace VehicleState
 				return VehicleType::CarRally;
 			// if (Model.Name == "CarDesert")
 			//     return VehicleType::CarDesert;
-		} catch { }
+		}
 
 		return VehicleType::CarSport;
 	}
