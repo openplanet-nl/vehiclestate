@@ -20,6 +20,7 @@ namespace VehicleState
 	}
 
 	shared enum VehicleType {
+		CharacterPilot,
 		CarSport,  // stadium
 		CarSnow,
 		CarRally

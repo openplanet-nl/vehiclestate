@@ -279,14 +279,14 @@ namespace VehicleState
 			if (Model is null)
 				return VehicleType::CarSport;
 
-			if (Model.Name == "CarSport")
-				return VehicleType::CarSport;
-			if (Model.Name == "CarSnow")
-				return VehicleType::CarSnow;
-			if (Model.Name == "CarRally")
-				return VehicleType::CarRally;
-			// if (Model.Name == "CarDesert")
-			//     return VehicleType::CarDesert;
+			switch (Model.Id.Value) {
+				case 0x4000625B: return VehicleType::CharacterPilot;
+				case 0x40004C95: return VehicleType::CarSport;
+				case 0x400016D9: return VehicleType::CarSnow;
+				case 0x40003CE4: return VehicleType::CarRally;
+				// case 0x4000????: return VehicleType::CarDesert;  // to update when car is added
+				default: return VehicleType::CarSport;
+			}
 		}
 
 		return VehicleType::CarSport;
