@@ -284,7 +284,7 @@ namespace VehicleState
 				case 0x40004C95: return VehicleType::CarSport;
 				case 0x400016D9: return VehicleType::CarSnow;
 				case 0x40003CE4: return VehicleType::CarRally;
-				// case 0x4000????: return VehicleType::CarDesert;  // to update when car is added
+				case 0x40006673: return VehicleType::CarDesert;
 				default: return VehicleType::CarSport;
 			}
 		}

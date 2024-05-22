@@ -23,8 +23,8 @@ namespace VehicleState
 		CharacterPilot,
 		CarSport,  // stadium
 		CarSnow,
-		CarRally
-		// CarDesert  // to update when car is added
+		CarRally,
+		CarDesert
 	}
 }
 
