@@ -34,7 +34,7 @@ namespace VehicleState
 	//  1 = Front Right
 	//  2 = Rear Left
 	//  3 = Rear Right
-	// The value returned seems to always be even (0, 2, 4, 6), but this may be completely
+	// The value returned seems to always be even (0, 2, 4, 6, 8), but this may be completely
 	// incorrect and give unexpected results. It is only present here because it technically
 	// exists in-game and may be useful to someone.
 	import FallingState GetWheelFalling(CSceneVehicleVisState@ vis, int w) from "VehicleState";
@@ -46,6 +46,13 @@ namespace VehicleState
 	// Get a timer which counts from 0.0 to 1.0 in the final second of reactor boost.
 	// Doesn't seem to work when watching a replay.
 	import float GetReactorFinalTimer(CSceneVehicleVisState@ vis) from "VehicleState";
+
+	// Get the current speed displayed on the back of the car if under the influence of Cruise Control.
+	// If not in Cruise Control, returns 0.
+	import int GetCruiseDisplaySpeed(CSceneVehicleVisState@ vis) from "VehicleState";
+
+	// Get the current vehicle type.
+	import VehicleType GetVehicleType(CSceneVehicleVisState@ vis) from "VehicleState";
 
 	// Get vehicle vis from a given player.
 	import CSceneVehicleVis@ GetVis(ISceneVis@ sceneVis, CSmPlayer@ player) from "VehicleState";

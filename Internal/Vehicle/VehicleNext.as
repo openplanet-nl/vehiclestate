@@ -173,7 +173,7 @@ namespace VehicleState
 	//  1 = Front Right
 	//  2 = Rear Left
 	//  3 = Rear Right
-	// The value returned seems to always be even (0, 2, 4, 6), but this may be completely
+	// The value returned seems to always be even (0, 2, 4, 6, 8), but this may be completely
 	// incorrect and give unexpected results. It is only present here because it technically
 	// exists in-game and may be useful to someone.
 	FallingState GetWheelFalling(CSceneVehicleVisState@ vis, int w)
@@ -191,7 +191,7 @@ namespace VehicleState
 		}
 
 		int state = Dev::GetOffsetInt32(vis, g_offsetWheelFalling[w]);
-		array<int> states = {0, 2, 4, 6};
+		array<int> states = {0, 2, 4, 6, 8};
 		if (states.Find(state) == -1) {
 			return FallingState(0);
 		}
@@ -234,11 +234,72 @@ namespace VehicleState
 		return Dev::GetOffsetFloat(vis, g_offsetReactorFinalTimer);
 	}
 
+	// Get the current speed displayed on the back of the car if under the influence of Cruise Control.
+	// If not in Cruise Control, returns 0.
+	int GetCruiseDisplaySpeed(CSceneVehicleVisState@ vis)
+	{
+		if (g_offsetCruiseDisplaySpeed == 0) {
+			auto type = Reflection::GetType("CSceneVehicleVisState");
+			if (type is null) {
+				error("Unable to find reflection info for CSceneVehicleVisState!");
+				return 0;
+			}
+			g_offsetCruiseDisplaySpeed = type.GetMember("FrontSpeed").Offset + 12;
+		}
+
+		return Dev::GetOffsetInt32(vis, g_offsetCruiseDisplaySpeed);
+	}
+
+	// Get the current vehicle type.
+	VehicleType GetVehicleType(CSceneVehicleVisState@ vis)
+	{
+		if (g_offsetVehicleType == 0) {
+			auto type = Reflection::GetType("CSceneVehicleVisState");
+			if (type is null) {
+				error("Unable to find reflection info for CSceneVehicleVisState!");
+				return VehicleType::CarSport;
+			}
+			g_offsetVehicleType = type.GetMember("InputSteer").Offset - 8;
+		}
+
+		CTrackMania@ App = cast<CTrackMania@>(GetApp());
+		CSmArenaClient@ Playground = cast<CSmArenaClient@>(App.CurrentPlayground);
+		if (
+			Playground is null
+			|| Playground.Arena is null
+			|| Playground.Arena.Resources is null
+			|| Playground.Arena.Resources.m_AllGameItemModels.Length == 0
+		)
+			return VehicleType::CarSport;
+
+		const uint index = Dev::GetOffsetUint8(vis, g_offsetVehicleType);
+
+		if (index < Playground.Arena.Resources.m_AllGameItemModels.Length) {
+			CGameItemModel@ Model = Playground.Arena.Resources.m_AllGameItemModels[index];
+			if (Model is null)
+				return VehicleType::CarSport;
+
+			switch (Model.Id.Value) {
+				case 0x4000625B: return VehicleType::CharacterPilot;
+				case 0x40004C95: return VehicleType::CarSport;
+				case 0x400016D9: return VehicleType::CarSnow;
+				case 0x40003CE4: return VehicleType::CarRally;
+				case 0x40006673: return VehicleType::CarDesert;
+				default: return VehicleType::CarSport;
+			}
+		}
+
+		return VehicleType::CarSport;
+	}
+
+	uint16 g_offsetPlayerVehicleID = 0;
 	uint16 g_offsetEngineRPM = 0;
 	array<uint16> g_offsetWheelDirt;
 	uint16 g_offsetSideSpeed = 0;
 	array<uint16> g_offsetWheelFalling;
 	uint16 g_offsetLastTurboLevel = 0;
 	uint16 g_offsetReactorFinalTimer = 0;
+	uint16 g_offsetCruiseDisplaySpeed = 0;
+	uint16 g_offsetVehicleType = 0;
 }
 #endif
