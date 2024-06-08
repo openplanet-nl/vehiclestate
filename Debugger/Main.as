@@ -135,6 +135,8 @@ namespace VehicleDebugger
 		}
 #endif
 
+		UI::LabelText("Type", tostring(VehicleState::GetVehicleType(state)));
+
 		UI::SliderFloat("##Control Steer", state.InputSteer, -1.0f, 1.0f);
 		UI::SameLine();
 		UI::Checkbox("##Control Gas", state.InputGasPedal > 0.1f);
