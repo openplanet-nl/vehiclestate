@@ -269,15 +269,17 @@ namespace VehicleState
 			|| Playground.Arena is null
 			|| Playground.Arena.Resources is null
 			|| Playground.Arena.Resources.m_AllGameItemModels.Length == 0
-		)
+		) {
 			return VehicleType::CarSport;
+		}
 
 		const uint index = Dev::GetOffsetUint8(vis, g_offsetVehicleType);
 
 		if (index < Playground.Arena.Resources.m_AllGameItemModels.Length) {
 			CGameItemModel@ Model = Playground.Arena.Resources.m_AllGameItemModels[index];
-			if (Model is null)
+			if (Model is null) {
 				return VehicleType::CarSport;
+			}
 
 			switch (Model.Id.Value) {
 				case 0x4000625B: return VehicleType::CharacterPilot;
