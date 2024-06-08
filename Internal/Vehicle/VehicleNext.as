@@ -294,7 +294,6 @@ namespace VehicleState
 		return VehicleType::CarSport;
 	}
 
-	uint16 g_offsetPlayerVehicleID = 0;
 	uint16 g_offsetEngineRPM = 0;
 	array<uint16> g_offsetWheelDirt;
 	uint16 g_offsetSideSpeed = 0;
