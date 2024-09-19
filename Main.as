@@ -31,7 +31,7 @@ void Main()
 		VehicleState::Internal::OffsetWheelFalling.InsertLast(FindRelativeOffset(typeVehicleVisState, "RRBreakNormedCoef", +0x4));
 		VehicleState::Internal::OffsetLastTurboLevel = FindRelativeOffset(typeVehicleVisState, "ReactorBoostLvl", -0x4);
 		VehicleState::Internal::OffsetReactorFinalTimer = FindRelativeOffset(typeVehicleVisState, "ReactorBoostType", +0x4);
-		VehicleState::Internal::OffsetCruiseDisplaySpeed = FindRelativeOffset(typeVehicleVisState, "FrontSpeed", 0x12);
+		VehicleState::Internal::OffsetCruiseDisplaySpeed = FindRelativeOffset(typeVehicleVisState, "FrontSpeed", +0xC);
 		VehicleState::Internal::OffsetVehicleType = FindRelativeOffset(typeVehicleVisState, "InputSteer", -0x8);
 	} else {
 		error("Unable to find reflection info for CSceneVehicleVisState!");
