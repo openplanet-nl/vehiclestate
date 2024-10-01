@@ -135,7 +135,9 @@ namespace VehicleDebugger
 		}
 #endif
 
+#if TMNEXT
 		UI::LabelText("Type", tostring(VehicleState::GetVehicleType(state)));
+#endif
 
 		UI::SliderFloat("##Control Steer", state.InputSteer, -1.0f, 1.0f);
 		UI::SameLine();
