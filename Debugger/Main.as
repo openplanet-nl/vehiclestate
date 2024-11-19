@@ -172,6 +172,13 @@ namespace VehicleDebugger
 			UI::LabelText("RRGroundContactMaterial", tostring(state.RRGroundContactMaterial));
 #endif
 		}
+#elif TURBO
+	UI::LabelText("FLWheelRot", "" + state.FLWheelRot);
+	UI::LabelText("FLWheelRotSpeed", "" + state.FLWheelRotSpeed);
+	UI::LabelText("FLSteerAngle", "" + state.FLSteerAngle);
+	UI::LabelText("FLGroundContact", "" + state.FLGroundContact);
+	UI::LabelText("FLGroundContactRaw", "" + state.FLGroundContactRaw);
+	UI::LabelText("FLSlipCoef", "" + state.FLSlipCoef);
 #endif
 	}
 }
