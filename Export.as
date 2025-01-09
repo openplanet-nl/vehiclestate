@@ -57,6 +57,9 @@ namespace VehicleState
 	// Get vehicle vis from a given player.
 	import CSceneVehicleVis@ GetVis(ISceneVis@ sceneVis, CSmPlayer@ player) from "VehicleState";
 
+	// Get the vehicle vis with the given entity ID.
+	import CSceneVehicleVis@ GetVisFromId(ISceneVis@ sceneVis, uint vehicleEntityId) from "VehicleState";
+
 	// Get the only existing vehicle vis state, if there is only one. Otherwise, this returns null.
 	import CSceneVehicleVis@ GetSingularVis(ISceneVis@ sceneVis) from "VehicleState";
 
