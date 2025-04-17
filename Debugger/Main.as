@@ -134,7 +134,6 @@ namespace VehicleDebugger
 
 			UI::BeginDisabled();
 
-#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -143,16 +142,12 @@ namespace VehicleDebugger
 			const float width = UI::GetContentRegionAvail().x / scale;
 			UI::SetNextItemWidth(width);
 			UI::Text(Text::Format("0x%08x", entityId));
-#endif
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
 			UI::Text("Brake Pedal");
 			UI::TableNextColumn();
-#if TURBO
-			const float width = UI::GetContentRegionAvail().x / scale;
-#endif
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##brakepedal", State.InputBrakePedal, 0.0f, 1.0f);
 
