@@ -250,7 +250,7 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SeparatorText("");
 
-#if MP4
+#if MP4 || TURBO
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
