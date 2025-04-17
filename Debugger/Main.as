@@ -224,8 +224,22 @@ namespace VehicleDebugger
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##bullet", State.BulletTimeNormed, 0.0f, 1.0f);
 
-			// NextRow("CamGrpStates");
-			// UI::Text(tostring(State.CamGrpStates));
+			NextRow("CamGrpStates");  // unknown type, changes when transforming vehicle
+			// UI::Text(tostring(State.CamGrpStates));  // crashes game
+			const Reflection::MwClassInfo@ cls = Reflection::GetType("CSceneVehicleVisState");
+			if (cls !is null) {
+				const Reflection::MwMemberInfo@ mem = cls.GetMember("CamGrpStates");
+				if (mem !is null && mem.Offset != 0xFFFF) {
+					UI::Text(
+						Text::Format("%2X ", Dev::GetOffsetUint8(State, mem.Offset))
+						+ Text::Format("%2X ", Dev::GetOffsetUint8(State, mem.Offset + 0x4))
+						+ Text::Format("%2X ", Dev::GetOffsetUint8(State, mem.Offset + 0x8))
+						+ Text::Format("%2X ", Dev::GetOffsetUint8(State, mem.Offset + 0xC))
+					);
+				} else
+					UI::Text("\\F00No member info or no offset");
+			} else
+				UI::Text("\\F00No class info");
 
 			NextRow("CruiseDisplaySpeed");
 			UI::SetNextItemWidth(width);
