@@ -1043,6 +1043,8 @@ namespace VehicleDebugger
 
 void RenderInterface()
 {
+#if SIG_DEVELOPER
 	if (Setting_DisplayDebugger && GetApp().CurrentPlayground !is null)
 		VehicleDebugger::Render();
+#endif
 }
