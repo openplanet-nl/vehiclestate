@@ -135,6 +135,7 @@ namespace VehicleState
 	//  1 = Front Right
 	//  2 = Rear Left
 	//  3 = Rear Right
+	// These indices are inconsistent with the game's memory but must remain unchanged as to not break dependent plugins.
 	float GetWheelDirt(CSceneVehicleVisState@ vis, int w)
 	{
 		if (Internal::OffsetWheelDirt.Length == 0) {
@@ -161,6 +162,7 @@ namespace VehicleState
 	//  1 = Front Right
 	//  2 = Rear Left
 	//  3 = Rear Right
+	// These indices are inconsistent with the game's memory but must remain unchanged as to not break dependent plugins.
 	// The value returned seems to always be even (0, 2, 4, 6, 8), but this may be completely
 	// incorrect and give unexpected results. It is only present here because it technically
 	// exists in-game and may be useful to someone.
