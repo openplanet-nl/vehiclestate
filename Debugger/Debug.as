@@ -137,6 +137,7 @@ namespace VehicleDebugger
 #if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("Entity ID");
 			UI::TableNextColumn();
 			const float width = UI::GetContentRegionAvail().x / scale;
@@ -249,6 +250,15 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SeparatorText("");
 
+#if MP4
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("ActiveEffects");
+			UI::TableNextColumn();
+			UI::Text(tostring(State.ActiveEffects));
+#endif
+
 #if TMNEXT
 			UI::TableNextRow();
 			UI::TableNextColumn();
@@ -268,6 +278,7 @@ namespace VehicleDebugger
 
 			// UI::TableNextRow();
 			// UI::TableNextColumn();
+			// UI::AlignTextToFramePadding();
 			// UI::Text("CamGrpStates");
 			// UI::TableNextColumn();
 			// UI::Text(tostring(State.CamGrpStates));
@@ -294,6 +305,7 @@ namespace VehicleDebugger
 #if TMNEXT
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("DiscontinuityCount");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.DiscontinuityCount));
@@ -304,6 +316,16 @@ namespace VehicleDebugger
 			UI::Text("EngineOn");
 			UI::TableNextColumn();
 			UI::Checkbox("##engine", State.EngineOn);
+#endif
+
+#if MP4
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("GearPercent");
+			UI::TableNextColumn();
+			UI::SetNextItemWidth(width);
+			UI::SliderFloat("##GearPercent", State.GearPercent, 0.0f, 1.0f);
 #endif
 
 			UI::TableNextRow();
@@ -317,6 +339,7 @@ namespace VehicleDebugger
 #if TMNEXT
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("InputVertical");
 			UI::TableNextColumn();
 			UI::Text(Text::Format("%.3f", State.InputVertical));
@@ -362,6 +385,7 @@ namespace VehicleDebugger
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("LastTurboLevel");
 			UI::TableNextColumn();
 			UI::Text(tostring(VehicleState::GetLastTurboLevel(State)));
@@ -377,6 +401,16 @@ namespace VehicleDebugger
 			UI::InputFloat3("##left", State.Left);
 #endif
 
+// #if MP4
+// 			UI::TableNextRow();
+// 			UI::TableNextColumn();
+// 			UI::AlignTextToFramePadding();
+// 			UI::Text("Location");
+// 			UI::TableNextColumn();
+// 			UI::SetNextItemWidth(width);
+// 			UI::InputIso4("##loc", State.Location);
+// #endif
+
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -388,6 +422,7 @@ namespace VehicleDebugger
 #if TMNEXT
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("RaceStartTime");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.RaceStartTime));
@@ -402,12 +437,14 @@ namespace VehicleDebugger
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("ReactorBoostLvl");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.ReactorBoostLvl));
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("ReactorBoostType");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.ReactorBoostType));
@@ -458,6 +495,23 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##turbotime", State.TurboTime, 0.0f, 1.0f);
+#endif
+
+#if MP4
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("TurboActive");
+			UI::TableNextColumn();
+			UI::Checkbox("##TurboActive", State.TurboActive);
+
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("TurboPercent");
+			UI::TableNextColumn();
+			UI::SetNextItemWidth(width);
+			UI::SliderFloat("##TurboPercent", State.TurboPercent, 0.0f, 1.0f);
 #endif
 
 #if TMNEXT || MP4
@@ -566,14 +620,25 @@ namespace VehicleDebugger
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("FLFalling");
 			UI::TableNextColumn();
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 0)));
 #endif
 
+#if MP4
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("FLGroundContact");
+			UI::TableNextColumn();
+			UI::Checkbox("##FLGroundContact", State.FLGroundContact);
+#endif
+
 #if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("FLGroundContactMaterial");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.FLGroundContactMaterial));
@@ -587,6 +652,15 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FLIcing01", State.FLIcing01, 0.0f, 1.0f);
+#endif
+
+#if MP4
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("FLIsWet");
+			UI::TableNextColumn();
+			UI::Checkbox("##FLIsWet", State.FLIsWet);
 #endif
 
 			UI::TableNextRow();
@@ -668,14 +742,25 @@ namespace VehicleDebugger
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("FRFalling");
 			UI::TableNextColumn();
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 1)));
 #endif
 
+#if MP4
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("FRGroundContact");
+			UI::TableNextColumn();
+			UI::Checkbox("##FRGroundContact", State.FRGroundContact);
+#endif
+
 #if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("FRGroundContactMaterial");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.FRGroundContactMaterial));
@@ -689,6 +774,15 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FRIcing01", State.FRIcing01, 0.0f, 1.0f);
+#endif
+
+#if MP4
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("FRIsWet");
+			UI::TableNextColumn();
+			UI::Checkbox("##FRIsWet", State.FRIsWet);
 #endif
 
 			UI::TableNextRow();
@@ -770,14 +864,25 @@ namespace VehicleDebugger
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("RRFalling");
 			UI::TableNextColumn();
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 3)));
 #endif
 
+#if MP4
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("RRGroundContact");
+			UI::TableNextColumn();
+			UI::Checkbox("##RRGroundContact", State.RRGroundContact);
+#endif
+
 #if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("RRGroundContactMaterial");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.RRGroundContactMaterial));
@@ -791,6 +896,15 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RRIcing01", State.RRIcing01, 0.0f, 1.0f);
+#endif
+
+#if MP4
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("RRIsWet");
+			UI::TableNextColumn();
+			UI::Checkbox("##RRIsWet", State.RRIsWet);
 #endif
 
 			UI::TableNextRow();
@@ -872,14 +986,25 @@ namespace VehicleDebugger
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("RLFalling");
 			UI::TableNextColumn();
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 2)));
 #endif
 
+#if MP4
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("RLGroundContact");
+			UI::TableNextColumn();
+			UI::Checkbox("##RLGroundContact", State.RLGroundContact);
+#endif
+
 #if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
 			UI::Text("RLGroundContactMaterial");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.RLGroundContactMaterial));
@@ -893,6 +1018,15 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RLIcing01", State.RLIcing01, 0.0f, 1.0f);
+#endif
+
+#if MP4
+			UI::TableNextRow();
+			UI::TableNextColumn();
+			UI::AlignTextToFramePadding();
+			UI::Text("RLIsWet");
+			UI::TableNextColumn();
+			UI::Checkbox("##RLIsWet", State.RLIsWet);
 #endif
 
 			UI::TableNextRow();
