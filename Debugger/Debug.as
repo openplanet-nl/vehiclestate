@@ -43,11 +43,6 @@ namespace VehicleDebugger
 	{
 		auto App = GetApp();
 
-		if (App.CurrentPlayground is null) {
-			UI::Text("\\$F00Not currently in a playground");
-			return;
-		}
-
 		if (App.GameScene is null) {
 			UI::Text("\\$F00Not currently in a scene");
 			return;
@@ -106,18 +101,13 @@ namespace VehicleDebugger
 	const float scale = UI::GetScale();
 
 #if MP4
-	void RenderVehicleState(CSceneVehicleVisState@ State)
+	void RenderVehicleState(CSceneVehicleVisState@ Vis)
 #else
 	void RenderVehicleState(CSceneVehicleVis@ Vis)
 #endif
 	{
-
-#if MP4
-		const uint entityId = VehicleState::GetEntityId(State);
-#else
 		CSceneVehicleVisState@ State = Vis.AsyncState;
 		const uint entityId = VehicleState::GetEntityId(Vis);
-#endif
 
 		UI::PushID(entityId);
 
@@ -958,6 +948,6 @@ namespace VehicleDebugger
 
 void RenderInterface()
 {
-	if (Setting_DisplayDebugger)
+	if (Setting_DisplayDebugger && GetApp().CurrentPlayground !is null)
 		VehicleDebugger::Render();
 }
