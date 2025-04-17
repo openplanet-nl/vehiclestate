@@ -161,27 +161,40 @@ shared class CSceneVehicleVisState
 	vec3 get_Position() { if (m_vis is null) { return vec3(); } return Dev::GetOffsetVec3(m_vis, 0xC4); }
 	vec3 get_WorldVel() { if (m_vis is null) { return vec3(); } return Dev::GetOffsetVec3(m_vis, 0xD0); }
 
+	bool get_IsGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0xF8) == 0x1; }
 	float get_GroundDist() { return 0; }
 
+	float get_FLDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0xFC); }
 	float get_FLWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x100); }
 	float get_FLWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x104); }
 	float get_FLSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x108); }
+	CAudioSourceSurface::ESurfId get_FLGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, 0x10C)); }
+	bool get_FLGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0x110) == 0x1; }
 	float get_FLSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x114); }
 
+	float get_FRDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x120); }
 	float get_FRWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x124); }
 	float get_FRWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x128); }
 	float get_FRSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x12C); }
+	CAudioSourceSurface::ESurfId get_FRGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, 0x130)); }
+	bool get_FRGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0x134) == 0x1; }
 	float get_FRSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x138); }
 
-	float get_RLWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x148); }
-	float get_RLWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x14C); }
-	float get_RLSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x150); }
-	float get_RLSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x15C); }
+	float get_RRDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x144); }
+	float get_RRWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x148); }
+	float get_RRWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x14C); }
+	float get_RRSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x150); }
+	CAudioSourceSurface::ESurfId get_RRGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, 0x154)); }
+	bool get_RRGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0x158) == 0x1; }
+	float get_RRSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x15C); }
 
-	float get_RRWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x16C); }
-	float get_RRWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x170); }
-	float get_RRSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x174); }
-	float get_RRSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x180); }
+	float get_RLDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x168); }
+	float get_RLWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x16C); }
+	float get_RLWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x170); }
+	float get_RLSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x174); }
+	CAudioSourceSurface::ESurfId get_RLGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, 0x178)); }
+	bool get_RLGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0x17C) == 0x1; }
+	float get_RLSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x180); }
 }
 
 #endif
