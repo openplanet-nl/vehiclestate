@@ -1,7 +1,6 @@
-#if TMNEXT
-
 namespace VehicleState
 {
+#if TMNEXT
 	shared enum FallingState {
 		FallingAir = 0,
 		FallingWater = 2,
@@ -26,175 +25,408 @@ namespace VehicleState
 		CarRally,
 		CarDesert
 	}
-}
 
-#elif MP4
-
-// Note: these and the other offsets (except for .EntityId) are for a CSceneVehicleVis,
-// not CSceneVehicleVisState (which is an internal part of CSceneVehicleVis).
-
-const uint WheelsStartOffset = 0x53C;
-const uint WheelStructLength = 0x24;
-
-namespace VehicleState
-{
+#elif MP4 || TURBO
 	shared enum EffectFlags {
 		FreeWheeling = 1,
+#if MP4
 		ForcedAcceleration = 2,
 		NoBrakes = 4,
 		NoSteering = 8,
 		NoGrip = 16
+#endif
 	}
+#endif
 }
 
-shared class CSceneVehicleVisState
+// Note: these and the other offsets (except for .EntityId) are for a CSceneVehicleVis,
+// not CSceneVehicleVisState (which is an internal part of CSceneVehicleVis).
+
+#if MP4 || TURBO
+shared abstract class CSceneVehicleVisStateInner
 {
 	CMwNod@ m_vis;
 
+	protected uint16 LocationOffset    = 0x0;  // set per game
+	protected uint16 WheelsStartOffset = 0x0;  // set per game
+	protected uint16 WheelStructLength = 0x24;
+
+	// wheels go clockwise starting from front-left
 	protected uint16 FL_ix = 0;
 	protected uint16 FR_ix = 1;
-	protected uint16 RL_ix = 3;
 	protected uint16 RR_ix = 2;
+	protected uint16 RL_ix = 3;
 
-	CSceneVehicleVisState(CMwNod@ m_vis)
-	{
-		@this.m_vis = m_vis;
-	}
-
-	// This provides compatibility with the TMNEXT API when using functions like `GetAllVis`
-	CSceneVehicleVisState@ get_AsyncState()
-	{
-		return this;
-	}
-
-	uint get_EntityId() { if (m_vis is null) { return 0; } return Dev::GetOffsetUint32(m_vis, 0x0); }
-
-	float get_InputSteer() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x4c0); }
-	float get_InputGasPedal() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x4c4); }
-	float get_InputBrakePedal() { if (m_vis is null) { return 0; } return InputIsBraking ? 1 : 0; }
-	bool get_InputIsBraking() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0x4cc) == 1; }
-
-	uint get_CurGear() { if (m_vis is null) { return 0; } return Dev::GetOffsetUint32(m_vis, 0x5f4); }
-
-	float get_RPM() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x5e8); }
-
-	float get_FrontSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x528); }
-	float get_SideSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x52C); }
-
-	iso4 get_Location() { if (m_vis is null) { return iso4(); } return Dev::GetOffsetIso4(m_vis, 0x4E0); }
-	vec3 get_Left() { if (m_vis is null) { return vec3(); } return vec3(Dev::GetOffsetFloat(m_vis, 0x4E0), Dev::GetOffsetFloat(m_vis, 0x4EC), Dev::GetOffsetFloat(m_vis, 0x4F8)); }
-	vec3 get_Up() { if (m_vis is null) { return vec3(); } return vec3(Dev::GetOffsetFloat(m_vis, 0x4E4), Dev::GetOffsetFloat(m_vis, 0x4F0), Dev::GetOffsetFloat(m_vis, 0x4FC)); }
-	vec3 get_Dir() { if (m_vis is null) { return vec3(); } return vec3(Dev::GetOffsetFloat(m_vis, 0x4E8), Dev::GetOffsetFloat(m_vis, 0x4F4), Dev::GetOffsetFloat(m_vis, 0x500)); }
-	vec3 get_Position() { if (m_vis is null) { return vec3(); } return Dev::GetOffsetVec3(m_vis, 0x504); }
-	vec3 get_WorldVel() { if (m_vis is null) { return vec3(); } return Dev::GetOffsetVec3(m_vis, 0x510); }
-
-	bool get_IsGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0x538) == 0x1; }
-	float get_GroundDist() { return 0; }
-
-	float get_FLDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x00); }
-	float get_FLWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x04); }
-	float get_FLWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x08); }
-	float get_FLSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x0C); }
-	CAudioSourceSurface::ESurfId get_FLGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x10)); }
-	bool get_FLGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x14) == 0x1; }
-	float get_FLSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x18); }
-	bool get_FLIsWet() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x20) == 0x1; }
-
-	float get_FRDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x00); }
-	float get_FRWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x04); }
-	float get_FRWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x08); }
-	float get_FRSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x0C); }
-	CAudioSourceSurface::ESurfId get_FRGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x10)); }
-	bool get_FRGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x14) == 0x1; }
-	float get_FRSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x18); }
-	bool get_FRIsWet() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x20) == 0x1; }
-
-	float get_RLDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x00); }
-	float get_RLWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x04); }
-	float get_RLWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x08); }
-	float get_RLSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x0C); }
-	CAudioSourceSurface::ESurfId get_RLGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x10)); }
-	bool get_RLGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x14) == 0x1; }
-	float get_RLSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x18); }
-	bool get_RLIsWet() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x20) == 0x1; }
-
-	float get_RRDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x00); }
-	float get_RRWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x04); }
-	float get_RRWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x08); }
-	float get_RRSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x0C); }
-	CAudioSourceSurface::ESurfId get_RRGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x10)); }
-	bool get_RRGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x14) == 0x1; }
-	float get_RRSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x18); }
-	bool get_RRIsWet() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x20) == 0x1; }
-
-	// Binary OR of `VehicleState::EffectFlags`
-	uint get_ActiveEffects() { if (m_vis is null) { return 0; } return Dev::GetOffsetUint32(m_vis, 0x630); }
-
-	bool get_TurboActive()  { if (m_vis is null) { return false; } return Dev::GetOffsetFloat(m_vis, 0x824) == 1.0; }
-	float get_TurboPercent()  { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x830); }
-	float get_GearPercent()  { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x83C); }
-}
-
-#elif TURBO
-
-shared class CSceneVehicleVisState
-{
-	CMwNod@ m_vis;
-
-	CSceneVehicleVisState(CMwNod@ vis)
-	{
+	CSceneVehicleVisStateInner(CMwNod@ vis) {
 		@m_vis = vis;
 	}
 
-	float get_InputSteer() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x8C); }
-	float get_InputGasPedal() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x94); }
-	float get_InputBrakePedal() { if (m_vis is null) { return 0; } return InputIsBraking ? 1 : 0; }
-	bool get_InputIsBraking() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0x98) == 1; }
+	uint get_EntityId() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetUint32(m_vis, 0x0);
+	}
 
-	uint get_CurGear() { if (m_vis is null) { return 0; } return Dev::GetOffsetUint32(m_vis, 0x198); }
+	float get_GroundDist() final {
+		return 0.0f;
+	}
+	float get_InputBrakePedal() final {
+		if (m_vis is null)
+			return 0.0f;
+		return InputIsBraking ? 1.0f : 0.0f;
+	}
+	bool get_InputIsBraking() {  // override per game
+		return false;
+	}
+	iso4 get_Location() final {
+		if (m_vis is null)
+			return iso4();
+		return Dev::GetOffsetIso4(m_vis, LocationOffset);
+	}
+	vec3 get_Left() final {
+		if (m_vis is null)
+			return vec3();
+		const iso4 loc = Location;
+		return vec3(loc.xx, loc.yx, loc.zx);
+	}
+	vec3 get_Up() final {
+		if (m_vis is null)
+			return vec3();
+		const iso4 loc = Location;
+		return vec3(loc.xy, loc.yy, loc.zy);
+	}
+	vec3 get_Dir() final {
+		if (m_vis is null)
+			return vec3();
+		const iso4 loc = Location;
+		return vec3(loc.xz, loc.yz, loc.zz);
+	}
+	vec3 get_Position() final {
+		if (m_vis is null)
+			return vec3();
+		return Dev::GetOffsetVec3(m_vis, LocationOffset + 0x24);
+	}
+	vec3 get_WorldVel() final {
+		if (m_vis is null)
+			return vec3();
+		return Dev::GetOffsetVec3(m_vis, LocationOffset + 0x30);
+	}
 
-	float get_RPM() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x18C); }
+	// FRONT-LEFT
 
-	float get_FrontSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0xE8); }
-	float get_SideSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0xEC); }
+	float get_FLDamperLen() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x0);
+	}
+	float get_FLWheelRot() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x4);
+	}
+	float get_FLWheelRotSpeed() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x8);
+	}
+	float get_FLSteerAngle() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0xC);
+	}
+	CAudioSourceSurface::ESurfId get_FLGroundContactMaterial() final {
+		if (m_vis is null)
+			return CAudioSourceSurface::ESurfId(0);
+		return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x10));
+	}
+	bool get_FLGroundContact() final {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x14) == 1;
+	}
+	float get_FLSlipCoef() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x18);
+	}
 
-	vec3 get_Position() { if (m_vis is null) { return vec3(); } return Dev::GetOffsetVec3(m_vis, 0xC4); }
-	vec3 get_WorldVel() { if (m_vis is null) { return vec3(); } return Dev::GetOffsetVec3(m_vis, 0xD0); }
+	// FRONT-RIGHT
 
-	bool get_IsGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0xF8) == 0x1; }
-	float get_GroundDist() { return 0; }
+	float get_FRDamperLen() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x0);
+	}
+	float get_FRWheelRot() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x4);
+	}
+	float get_FRWheelRotSpeed() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x8);
+	}
+	float get_FRSteerAngle() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0xC);
+	}
+	CAudioSourceSurface::ESurfId get_FRGroundContactMaterial() final {
+		if (m_vis is null)
+			return CAudioSourceSurface::ESurfId(0);
+		return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x10));
+	}
+	bool get_FRGroundContact() final {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x14) == 1;
+	}
+	float get_FRSlipCoef() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x18);
+	}
 
-	float get_FLDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0xFC); }
-	float get_FLWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x100); }
-	float get_FLWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x104); }
-	float get_FLSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x108); }
-	CAudioSourceSurface::ESurfId get_FLGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, 0x10C)); }
-	bool get_FLGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0x110) == 0x1; }
-	float get_FLSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x114); }
+	// REAR-RIGHT
 
-	float get_FRDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x120); }
-	float get_FRWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x124); }
-	float get_FRWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x128); }
-	float get_FRSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x12C); }
-	CAudioSourceSurface::ESurfId get_FRGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, 0x130)); }
-	bool get_FRGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0x134) == 0x1; }
-	float get_FRSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x138); }
+	float get_RRDamperLen() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x0);
+	}
+	float get_RRWheelRot() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x4);
+	}
+	float get_RRWheelRotSpeed() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x8);
+	}
+	float get_RRSteerAngle() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0xC);
+	}
+	CAudioSourceSurface::ESurfId get_RRGroundContactMaterial() final {
+		if (m_vis is null)
+			return CAudioSourceSurface::ESurfId(0);
+		return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x10));
+	}
+	bool get_RRGroundContact() final {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x14) == 1;
+	}
+	float get_RRSlipCoef() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x18);
+	}
 
-	float get_RRDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x144); }
-	float get_RRWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x148); }
-	float get_RRWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x14C); }
-	float get_RRSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x150); }
-	CAudioSourceSurface::ESurfId get_RRGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, 0x154)); }
-	bool get_RRGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0x158) == 0x1; }
-	float get_RRSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x15C); }
+	// REAR-LEFT
 
-	float get_RLDamperLen() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x168); }
-	float get_RLWheelRot() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x16C); }
-	float get_RLWheelRotSpeed() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x170); }
-	float get_RLSteerAngle() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x174); }
-	CAudioSourceSurface::ESurfId get_RLGroundContactMaterial() { if (m_vis is null) { return CAudioSourceSurface::ESurfId(0); } return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, 0x178)); }
-	bool get_RLGroundContact() { if (m_vis is null) { return false; } return Dev::GetOffsetUint32(m_vis, 0x17C) == 0x1; }
-	float get_RLSlipCoef() { if (m_vis is null) { return 0; } return Dev::GetOffsetFloat(m_vis, 0x180); }
+	float get_RLDamperLen() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x0);
+	}
+	float get_RLWheelRot() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x4);
+	}
+	float get_RLWheelRotSpeed() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x8);
+	}
+	float get_RLSteerAngle() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0xC);
+	}
+	CAudioSourceSurface::ESurfId get_RLGroundContactMaterial() final {
+		if (m_vis is null)
+			return CAudioSourceSurface::ESurfId(0);
+		return CAudioSourceSurface::ESurfId(Dev::GetOffsetUint16(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x10));
+	}
+	bool get_RLGroundContact() final {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x14) == 1;
+	}
+	float get_RLSlipCoef() final {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x18);
+	}
+}
+#endif
+
+#if MP4
+shared class CSceneVehicleVisState : CSceneVehicleVisStateInner
+{
+	CSceneVehicleVisState(CMwNod@ vis) {
+		super(vis);
+		LocationOffset = 0x4E0;
+		WheelsStartOffset = 0x53C;
+	}
+
+	// This provides compatibility with the TMNEXT API when using functions like `GetAllVis`
+	CSceneVehicleVisState@ get_AsyncState() {
+		return this;
+	}
+
+	float get_InputSteer() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0x4C0);
+	}
+	float get_InputGasPedal() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0x4C4);
+	}
+	bool get_InputIsBraking() override {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, 0x4CC) == 1;
+	}
+	float get_FrontSpeed() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0x528);
+	}
+	float get_SideSpeed() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0x52C);
+	}
+	bool get_IsGroundContact() {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, 0x538) == 1;
+	}
+	bool get_FLIsWet() {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (FL_ix * WheelStructLength) + 0x20) == 1;
+	}
+	bool get_FRIsWet() {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (FR_ix * WheelStructLength) + 0x20) == 1;
+	}
+	bool get_RRIsWet() {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (RR_ix * WheelStructLength) + 0x20) == 1;
+	}
+	bool get_RLIsWet() {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, WheelsStartOffset + (RL_ix * WheelStructLength) + 0x20) == 1;
+	}
+	float get_RPM() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0x5E8);
+	}
+	uint get_CurGear() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetUint32(m_vis, 0x5F4);
+	}
+	// Binary OR of `VehicleState::EffectFlags`
+	uint get_ActiveEffects() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetUint32(m_vis, 0x630);
+	}
+	bool get_TurboActive() {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetFloat(m_vis, 0x824) == 1.0f;
+	}
+	float get_TurboPercent() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0x830);
+	}
+	float get_GearPercent() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0x83C);
+	}
 }
 
+#elif TURBO
+shared class CSceneVehicleVisState : CSceneVehicleVisStateInner
+{
+	CSceneVehicleVisState(CMwNod@ vis) {
+		super(vis);
+		LocationOffset    = 0xA0;
+		WheelsStartOffset = 0xFC;
+	}
+
+	float get_InputSteer() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0x8C);
+	}
+	float get_InputGasPedal() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0x94);
+	}
+	bool get_InputIsBraking() override {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, 0x98) == 1;
+	}
+	float get_FrontSpeed() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0xE8);
+	}
+	float get_SideSpeed() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0xEC);
+	}
+	bool get_IsGroundContact() {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, 0xF8) == 1;
+	}
+	float get_RPM() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetFloat(m_vis, 0x18C);
+	}
+	uint get_CurGear() {
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetUint32(m_vis, 0x198);
+	}
+	bool get_TurboActive() {
+		if (m_vis is null)
+			return false;
+		return Dev::GetOffsetUint32(m_vis, 0x1A0) == 1;
+	}
+	float get_TurboPercent() {
+		if (m_vis is null)
+			return 0.0f;
+		return Dev::GetOffsetFloat(m_vis, 0x1A4);
+	}
+	// Binary OR of `VehicleState::EffectFlags`
+	uint get_ActiveEffects() {  // only engine off
+		if (m_vis is null)
+			return 0;
+		return Dev::GetOffsetUint32(m_vis, 0x1B8);
+	}
+}
 #endif

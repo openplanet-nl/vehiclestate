@@ -292,7 +292,6 @@ namespace VehicleDebugger
 			UI::SliderInt("##cruise", VehicleState::GetCruiseDisplaySpeed(State), -1000, 1000);
 #endif
 
-#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -300,7 +299,6 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##dir", State.Dir);
-#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -389,7 +387,6 @@ namespace VehicleDebugger
 			UI::Text(tostring(VehicleState::GetLastTurboLevel(State)));
 #endif
 
-#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -397,17 +394,6 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##left", State.Left);
-#endif
-
-// #if MP4
-// 			UI::TableNextRow();
-// 			UI::TableNextColumn();
-// 			UI::AlignTextToFramePadding();
-// 			UI::Text("Location");
-// 			UI::TableNextColumn();
-// 			UI::SetNextItemWidth(width);
-// 			UI::InputIso4("##loc", State.Location);
-// #endif
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
@@ -495,7 +481,7 @@ namespace VehicleDebugger
 			UI::SliderFloat("##turbotime", State.TurboTime, 0.0f, 1.0f);
 #endif
 
-#if MP4
+#if MP4 || TURBO
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -512,7 +498,6 @@ namespace VehicleDebugger
 			UI::SliderFloat("##TurboPercent", State.TurboPercent, 0.0f, 1.0f);
 #endif
 
-#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -520,7 +505,6 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##up", State.Up);
-#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -583,7 +567,7 @@ namespace VehicleDebugger
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
-			UI::SeparatorText("\\$888Front-Left Tire");
+			UI::SeparatorText("\\$888Front-Left");
 			UI::TableNextColumn();
 			UI::SeparatorText("");
 
@@ -701,7 +685,7 @@ namespace VehicleDebugger
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
-			UI::SeparatorText("\\$888Front-Right Tire");
+			UI::SeparatorText("\\$888Front-Right");
 			UI::TableNextColumn();
 			UI::SeparatorText("");
 
@@ -819,7 +803,7 @@ namespace VehicleDebugger
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
-			UI::SeparatorText("\\$888Rear-Right Tire");
+			UI::SeparatorText("\\$888Rear-Right");
 			UI::TableNextColumn();
 			UI::SeparatorText("");
 
@@ -937,7 +921,7 @@ namespace VehicleDebugger
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
-			UI::SeparatorText("\\$888Rear-Left Tire");
+			UI::SeparatorText("\\$888Rear-Left");
 			UI::TableNextColumn();
 			UI::SeparatorText("");
 
