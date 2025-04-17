@@ -144,7 +144,7 @@ namespace VehicleDebugger
 
 			UI::BeginDisabled();
 
-#if !TURBO
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::Text("Entity ID");
@@ -159,6 +159,9 @@ namespace VehicleDebugger
 			UI::AlignTextToFramePadding();
 			UI::Text("Brake Pedal");
 			UI::TableNextColumn();
+#if TURBO
+			const float width = UI::GetContentRegionAvail().x / scale;
+#endif
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##brakepedal", State.InputBrakePedal, 0.0f, 1.0f);
 
@@ -288,6 +291,7 @@ namespace VehicleDebugger
 			UI::SliderInt("##cruise", VehicleState::GetCruiseDisplaySpeed(State), -1000, 1000);
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -295,6 +299,7 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##dir", State.Dir);
+#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -327,12 +332,14 @@ namespace VehicleDebugger
 			UI::Text(Text::Format("%.3f", State.InputVertical));
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
 			UI::Text("IsGroundContact");
 			UI::TableNextColumn();
 			UI::Checkbox("##gndcontact", State.IsGroundContact);
+#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -370,6 +377,7 @@ namespace VehicleDebugger
 			UI::Text(tostring(VehicleState::GetLastTurboLevel(State)));
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -377,6 +385,7 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##left", State.Left);
+#endif
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
@@ -461,6 +470,7 @@ namespace VehicleDebugger
 			UI::SliderFloat("##turbotime", State.TurboTime, 0.0f, 1.0f);
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -468,6 +478,7 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##up", State.Up);
+#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -544,6 +555,7 @@ namespace VehicleDebugger
 			UI::SliderFloat("##FLBreakNormedCoef", State.FLBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -551,6 +563,7 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FLDamperLen", State.FLDamperLen, 0.0f, 0.2f);
+#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -568,11 +581,13 @@ namespace VehicleDebugger
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 0)));
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::Text("FLGroundContactMaterial");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.FLGroundContactMaterial));
+#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -642,6 +657,7 @@ namespace VehicleDebugger
 			UI::SliderFloat("##FRBreakNormedCoef", State.FRBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -649,6 +665,7 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FRDamperLen", State.FRDamperLen, 0.0f, 0.2f);
+#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -666,11 +683,13 @@ namespace VehicleDebugger
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 1)));
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::Text("FRGroundContactMaterial");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.FRGroundContactMaterial));
+#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -740,6 +759,7 @@ namespace VehicleDebugger
 			UI::SliderFloat("##RRBreakNormedCoef", State.RRBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -747,6 +767,7 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RRDamperLen", State.RRDamperLen, 0.0f, 0.2f);
+#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -764,11 +785,13 @@ namespace VehicleDebugger
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 3)));
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::Text("RRGroundContactMaterial");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.RRGroundContactMaterial));
+#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -838,6 +861,7 @@ namespace VehicleDebugger
 			UI::SliderFloat("##RLBreakNormedCoef", State.RLBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::AlignTextToFramePadding();
@@ -845,6 +869,7 @@ namespace VehicleDebugger
 			UI::TableNextColumn();
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RLDamperLen", State.RLDamperLen, 0.0f, 0.2f);
+#endif
 
 #if TMNEXT
 			UI::TableNextRow();
@@ -862,11 +887,13 @@ namespace VehicleDebugger
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 2)));
 #endif
 
+#if TMNEXT || MP4
 			UI::TableNextRow();
 			UI::TableNextColumn();
 			UI::Text("RLGroundContactMaterial");
 			UI::TableNextColumn();
 			UI::Text(tostring(State.RLGroundContactMaterial));
+#endif
 
 #if TMNEXT
 			UI::TableNextRow();
