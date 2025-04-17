@@ -100,6 +100,14 @@ namespace VehicleDebugger
 
 	const float scale = UI::GetScale();
 
+	void NextRow(const string &in varName) {
+		UI::TableNextRow();
+		UI::TableNextColumn();
+		UI::AlignTextToFramePadding();
+		UI::Text(varName);
+		UI::TableNextColumn();
+	}
+
 #if MP4
 	void RenderVehicleState(CSceneVehicleVisState@ Vis)
 #else
@@ -119,11 +127,7 @@ namespace VehicleDebugger
 
 #if DEVELOPER
 			if (Setting_DisplayMemoryButtons) {
-				UI::TableNextRow();
-				UI::TableNextColumn();
-				UI::AlignTextToFramePadding();
-				UI::Text("Explore Memory");
-				UI::TableNextColumn();
+				NextRow("Explore Memory");
 				if (UI::Button("Vis##mem"))
 					ExploreMemory(Vis);
 				UI::SameLine();
@@ -134,35 +138,19 @@ namespace VehicleDebugger
 
 			UI::BeginDisabled();
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("Entity ID");
-			UI::TableNextColumn();
+			NextRow("Entity ID");
 			const float width = UI::GetContentRegionAvail().x / scale;
 			UI::SetNextItemWidth(width);
 			UI::Text(Text::Format("0x%08x", entityId));
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("Brake Pedal");
-			UI::TableNextColumn();
+			NextRow("Brake Pedal");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##brakepedal", State.InputBrakePedal, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("Braking");
-			UI::TableNextColumn();
+			NextRow("Braking");
 			UI::Checkbox("##braking", State.InputIsBraking);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FrontSpeed");
-			UI::TableNextColumn();
+			NextRow("FrontSpeed");
 			const float frontKph = State.FrontSpeed * 3.6f;
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat(
@@ -174,43 +162,23 @@ namespace VehicleDebugger
 					+ Text::Format("%.3f", frontKph) + " kph"
 			);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("Gas Pedal");
-			UI::TableNextColumn();
+			NextRow("Gas Pedal");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##gaspedal", State.InputGasPedal, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("Gear");
-			UI::TableNextColumn();
+			NextRow("Gear");
 			UI::SetNextItemWidth(width);
 			UI::SliderInt("##gear", State.CurGear, 0, 7);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("InputSteer");
-			UI::TableNextColumn();
+			NextRow("InputSteer");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##steer", State.InputSteer, -1.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RPM");
-			UI::TableNextColumn();
+			NextRow("RPM");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##rpm", VehicleState::GetRPM(State), 0.0f, 11000.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("SideSpeed");
-			UI::TableNextColumn();
+			NextRow("SideSpeed");
 			const float side = VehicleState::GetSideSpeed(State);
 			const float sideKph = side * 3.6f;
 			UI::SetNextItemWidth(width);
@@ -224,10 +192,7 @@ namespace VehicleDebugger
 			);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::Text("Type");
-			UI::TableNextColumn();
+			NextRow("Type");
 			UI::Text(tostring(VehicleState::GetVehicleType(State)));
 #endif
 
@@ -246,308 +211,156 @@ namespace VehicleDebugger
 			UI::SeparatorText("");
 
 #if MP4 || TURBO
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("ActiveEffects");
-			UI::TableNextColumn();
+			NextRow("ActiveEffects");
 			UI::Text(tostring(State.ActiveEffects));
 #endif
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("AirBrakeNormed");
-			UI::TableNextColumn();
+			NextRow("AirBrakeNormed");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##airbrake", State.AirBrakeNormed, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("BulletTimeNormed");
-			UI::TableNextColumn();
+			NextRow("BulletTimeNormed");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##bullet", State.BulletTimeNormed, 0.0f, 1.0f);
 
-			// UI::TableNextRow();
-			// UI::TableNextColumn();
-			// UI::AlignTextToFramePadding();
-			// UI::Text("CamGrpStates");
-			// UI::TableNextColumn();
+			// NextRow("CamGrpStates");
 			// UI::Text(tostring(State.CamGrpStates));
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("CruiseDisplaySpeed");
-			UI::TableNextColumn();
+			NextRow("CruiseDisplaySpeed");
 			UI::SetNextItemWidth(width);
 			UI::SliderInt("##cruise", VehicleState::GetCruiseDisplaySpeed(State), -1000, 1000);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("Dir");
-			UI::TableNextColumn();
+			NextRow("Dir");
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##dir", State.Dir);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("DiscontinuityCount");
-			UI::TableNextColumn();
+			NextRow("DiscontinuityCount");
 			UI::Text(tostring(State.DiscontinuityCount));
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("EngineOn");
-			UI::TableNextColumn();
+			NextRow("EngineOn");
 			UI::Checkbox("##engine", State.EngineOn);
 #endif
 
 #if MP4
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("GearPercent");
-			UI::TableNextColumn();
+			NextRow("GearPercent");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##GearPercent", State.GearPercent, 0.0f, 1.0f);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("GroundDist");
-			UI::TableNextColumn();
+			NextRow("GroundDist");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##gnddist", State.GroundDist, 0.0f, 20.0f);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("InputVertical");
-			UI::TableNextColumn();
+			NextRow("InputVertical");
 			UI::Text(Text::Format("%.3f", State.InputVertical));
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("IsGroundContact");
-			UI::TableNextColumn();
+			NextRow("IsGroundContact");
 			UI::Checkbox("##gndcontact", State.IsGroundContact);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("IsReactorGroundMode");
-			UI::TableNextColumn();
+			NextRow("IsReactorGroundMode");
 			UI::Checkbox("##reactgnd", State.IsReactorGroundMode);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("IsTopContact");
-			UI::TableNextColumn();
+			NextRow("IsTopContact");
 			UI::Checkbox("##topcontact", State.IsTopContact);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("IsTurbo");
-			UI::TableNextColumn();
+			NextRow("IsTurbo");
 			UI::Checkbox("##isturbo", State.IsTurbo);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("IsWheelsBurning");
-			UI::TableNextColumn();
+			NextRow("IsWheelsBurning");
 			UI::Checkbox("##burn", State.IsWheelsBurning);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("LastTurboLevel");
-			UI::TableNextColumn();
+			NextRow("LastTurboLevel");
 			UI::Text(tostring(VehicleState::GetLastTurboLevel(State)));
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("Left");
-			UI::TableNextColumn();
+			NextRow("Left");
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##left", State.Left);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("Position");
-			UI::TableNextColumn();
+			NextRow("Position");
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##pos", State.Position);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RaceStartTime");
-			UI::TableNextColumn();
+			NextRow("RaceStartTime");
 			UI::Text(tostring(State.RaceStartTime));
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("ReactorAirControl");
-			UI::TableNextColumn();
+			NextRow("ReactorAirControl");
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##reactair", State.ReactorAirControl);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("ReactorBoostLvl");
-			UI::TableNextColumn();
+			NextRow("ReactorBoostLvl");
 			UI::Text(tostring(State.ReactorBoostLvl));
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("ReactorBoostType");
-			UI::TableNextColumn();
+			NextRow("ReactorBoostType");
 			UI::Text(tostring(State.ReactorBoostType));
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("ReactorFinalTimer");
-			UI::TableNextColumn();
+			NextRow("ReactorFinalTimer");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##reactfinal", VehicleState::GetReactorFinalTimer(State), 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("ReactorInputsX");
-			UI::TableNextColumn();
+			NextRow("ReactorInputsX");
 			UI::Checkbox("##reactx", State.ReactorInputsX);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("SimulationTimeCoef");
-			UI::TableNextColumn();
+			NextRow("SimulationTimeCoef");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##simtime", State.SimulationTimeCoef, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("SpoilerOpenNormed");
-			UI::TableNextColumn();
+			NextRow("SpoilerOpenNormed");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##spoiler", State.SpoilerOpenNormed, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("Turbo");
-			UI::TableNextColumn();
+			NextRow("Turbo");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##turbo", Vis.Turbo, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("TurboTime");
-			UI::TableNextColumn();
+			NextRow("TurboTime");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##turbotime", State.TurboTime, 0.0f, 1.0f);
 #endif
 
 #if MP4 || TURBO
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("TurboActive");
-			UI::TableNextColumn();
+			NextRow("TurboActive");
 			UI::Checkbox("##TurboActive", State.TurboActive);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("TurboPercent");
-			UI::TableNextColumn();
+			NextRow("TurboPercent");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##TurboPercent", State.TurboPercent, 0.0f, 1.0f);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("Up");
-			UI::TableNextColumn();
+			NextRow("Up");
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##up", State.Up);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("WaterImmersionCoef");
-			UI::TableNextColumn();
+			NextRow("WaterImmersionCoef");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##waterimm", State.WaterImmersionCoef, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("WaterOverSurfacePos");
-			UI::TableNextColumn();
+			NextRow("WaterOverSurfacePos");
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##waterover", State.WaterOverSurfacePos);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("WetnessValue01");
-			UI::TableNextColumn();
+			NextRow("WetnessValue01");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##wetness", State.WetnessValue01, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("WingsOpenNormed");
-			UI::TableNextColumn();
+			NextRow("WingsOpenNormed");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##wings", State.WingsOpenNormed, 0.0f, 0.08f);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("WorldVel");
-			UI::TableNextColumn();
+			NextRow("WorldVel");
 			UI::SetNextItemWidth(width);
 			UI::InputFloat3("##worldvel", State.WorldVel);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("WorldVel.Length");
-			UI::TableNextColumn();
+			NextRow("WorldVel.Length");
 			const float vel = State.WorldVel.Length();
 			const float velKph = vel * 3.6f;
 			UI::SetNextItemWidth(width);
@@ -567,114 +380,62 @@ namespace VehicleDebugger
 			UI::SeparatorText("");
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLBreakNormedCoef");
-			UI::TableNextColumn();
+			NextRow("FLBreakNormedCoef");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FLBreakNormedCoef", State.FLBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLDamperLen");
-			UI::TableNextColumn();
+			NextRow("FLDamperLen");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FLDamperLen", State.FLDamperLen, 0.0f, 0.2f);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLDirt");
-			UI::TableNextColumn();
+			NextRow("FLDirt");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FLDirt", VehicleState::GetWheelDirt(State, 0), 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLFalling");
-			UI::TableNextColumn();
+			NextRow("FLFalling");
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 0)));
 #endif
 
 #if MP4 || TURBO
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLGroundContact");
-			UI::TableNextColumn();
+			NextRow("FLGroundContact");
 			UI::Checkbox("##FLGroundContact", State.FLGroundContact);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLGroundContactMaterial");
-			UI::TableNextColumn();
+			NextRow("FLGroundContactMaterial");
 			UI::Text(tostring(State.FLGroundContactMaterial));
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLIcing01");
-			UI::TableNextColumn();
+			NextRow("FLIcing01");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FLIcing01", State.FLIcing01, 0.0f, 1.0f);
 #endif
 
 #if MP4
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLIsWet");
-			UI::TableNextColumn();
+			NextRow("FLIsWet");
 			UI::Checkbox("##FLIsWet", State.FLIsWet);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLSlipCoef");
-			UI::TableNextColumn();
+			NextRow("FLSlipCoef");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FLSlipCoef", State.FLSlipCoef, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLSteerAngle");
-			UI::TableNextColumn();
+			NextRow("FLSteerAngle");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FLSteerAngle", State.FLSteerAngle, -1.0f, 1.0f);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLTireWear01");
-			UI::TableNextColumn();
+			NextRow("FLTireWear01");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FLTireWear01", State.FLTireWear01, 0.0f, 1.0f);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLWheelRot");
-			UI::TableNextColumn();
+			NextRow("FLWheelRot");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FLWheelRot", State.FLWheelRot, 0.0f, 1608.495f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FLWheelRotSpeed");
-			UI::TableNextColumn();
+			NextRow("FLWheelRotSpeed");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FLWheelRotSpeed", State.FLWheelRotSpeed, -1000.0f, 1000.0f);
 
@@ -685,114 +446,62 @@ namespace VehicleDebugger
 			UI::SeparatorText("");
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRBreakNormedCoef");
-			UI::TableNextColumn();
+			NextRow("FRBreakNormedCoef");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FRBreakNormedCoef", State.FRBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRDamperLen");
-			UI::TableNextColumn();
+			NextRow("FRDamperLen");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FRDamperLen", State.FRDamperLen, 0.0f, 0.2f);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRDirt");
-			UI::TableNextColumn();
+			NextRow("FRDirt");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FRDirt", VehicleState::GetWheelDirt(State, 1), 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRFalling");
-			UI::TableNextColumn();
+			NextRow("FRFalling");
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 1)));
 #endif
 
 #if MP4 || TURBO
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRGroundContact");
-			UI::TableNextColumn();
+			NextRow("FRGroundContact");
 			UI::Checkbox("##FRGroundContact", State.FRGroundContact);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRGroundContactMaterial");
-			UI::TableNextColumn();
+			NextRow("FRGroundContactMaterial");
 			UI::Text(tostring(State.FRGroundContactMaterial));
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRIcing01");
-			UI::TableNextColumn();
+			NextRow("FRIcing01");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FRIcing01", State.FRIcing01, 0.0f, 1.0f);
 #endif
 
 #if MP4
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRIsWet");
-			UI::TableNextColumn();
+			NextRow("FRIsWet");
 			UI::Checkbox("##FRIsWet", State.FRIsWet);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRSlipCoef");
-			UI::TableNextColumn();
+			NextRow("FRSlipCoef");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FRSlipCoef", State.FRSlipCoef, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRSteerAngle");
-			UI::TableNextColumn();
+			NextRow("FRSteerAngle");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FRSteerAngle", State.FRSteerAngle, -1.0f, 1.0f);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRTireWear01");
-			UI::TableNextColumn();
+			NextRow("FRTireWear01");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FRTireWear01", State.FRTireWear01, 0.0f, 1.0f);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRWheelRot");
-			UI::TableNextColumn();
+			NextRow("FRWheelRot");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FRWheelRot", State.FRWheelRot, 0.0f, 1608.495f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("FRWheelRotSpeed");
-			UI::TableNextColumn();
+			NextRow("FRWheelRotSpeed");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##FRWheelRotSpeed", State.FRWheelRotSpeed, -1000.0f, 1000.0f);
 
@@ -803,114 +512,62 @@ namespace VehicleDebugger
 			UI::SeparatorText("");
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRBreakNormedCoef");
-			UI::TableNextColumn();
+			NextRow("RRBreakNormedCoef");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RRBreakNormedCoef", State.RRBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRDamperLen");
-			UI::TableNextColumn();
+			NextRow("RRDamperLen");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RRDamperLen", State.RRDamperLen, 0.0f, 0.2f);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRDirt");
-			UI::TableNextColumn();
+			NextRow("RRDirt");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RRDirt", VehicleState::GetWheelDirt(State, 3), 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRFalling");
-			UI::TableNextColumn();
+			NextRow("RRFalling");
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 3)));
 #endif
 
 #if MP4 || TURBO
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRGroundContact");
-			UI::TableNextColumn();
+			NextRow("RRGroundContact");
 			UI::Checkbox("##RRGroundContact", State.RRGroundContact);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRGroundContactMaterial");
-			UI::TableNextColumn();
+			NextRow("RRGroundContactMaterial");
 			UI::Text(tostring(State.RRGroundContactMaterial));
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRIcing01");
-			UI::TableNextColumn();
+			NextRow("RRIcing01");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RRIcing01", State.RRIcing01, 0.0f, 1.0f);
 #endif
 
 #if MP4
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRIsWet");
-			UI::TableNextColumn();
+			NextRow("RRIsWet");
 			UI::Checkbox("##RRIsWet", State.RRIsWet);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRSlipCoef");
-			UI::TableNextColumn();
+			NextRow("RRSlipCoef");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RRSlipCoef", State.RRSlipCoef, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRSteerAngle");
-			UI::TableNextColumn();
+			NextRow("RRSteerAngle");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RRSteerAngle", State.RRSteerAngle, -1.0f, 1.0f);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRTireWear01");
-			UI::TableNextColumn();
+			NextRow("RRTireWear01");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RRTireWear01", State.RRTireWear01, 0.0f, 1.0f);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRWheelRot");
-			UI::TableNextColumn();
+			NextRow("RRWheelRot");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RRWheelRot", State.RRWheelRot, 0.0f, 1608.495f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RRWheelRotSpeed");
-			UI::TableNextColumn();
+			NextRow("RRWheelRotSpeed");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RRWheelRotSpeed", State.RRWheelRotSpeed, -1000.0f, 1000.0f);
 
@@ -921,114 +578,62 @@ namespace VehicleDebugger
 			UI::SeparatorText("");
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLBreakNormedCoef");
-			UI::TableNextColumn();
+			NextRow("RLBreakNormedCoef");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RLBreakNormedCoef", State.RLBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLDamperLen");
-			UI::TableNextColumn();
+			NextRow("RLDamperLen");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RLDamperLen", State.RLDamperLen, 0.0f, 0.2f);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLDirt");
-			UI::TableNextColumn();
+			NextRow("RLDirt");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RLDirt", VehicleState::GetWheelDirt(State, 2), 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLFalling");
-			UI::TableNextColumn();
+			NextRow("RLFalling");
 			UI::Text(tostring(VehicleState::GetWheelFalling(State, 2)));
 #endif
 
 #if MP4 || TURBO
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLGroundContact");
-			UI::TableNextColumn();
+			NextRow("RLGroundContact");
 			UI::Checkbox("##RLGroundContact", State.RLGroundContact);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLGroundContactMaterial");
-			UI::TableNextColumn();
+			NextRow("RLGroundContactMaterial");
 			UI::Text(tostring(State.RLGroundContactMaterial));
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLIcing01");
-			UI::TableNextColumn();
+			NextRow("RLIcing01");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RLIcing01", State.RLIcing01, 0.0f, 1.0f);
 #endif
 
 #if MP4
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLIsWet");
-			UI::TableNextColumn();
+			NextRow("RLIsWet");
 			UI::Checkbox("##RLIsWet", State.RLIsWet);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLSlipCoef");
-			UI::TableNextColumn();
+			NextRow("RLSlipCoef");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RLSlipCoef", State.RLSlipCoef, 0.0f, 1.0f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLSteerAngle");
-			UI::TableNextColumn();
+			NextRow("RLSteerAngle");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RLSteerAngle", State.RLSteerAngle, -1.0f, 1.0f);
 
 #if TMNEXT
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLTireWear01");
-			UI::TableNextColumn();
+			NextRow("RLTireWear01");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RLTireWear01", State.RLTireWear01, 0.0f, 1.0f);
 #endif
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLWheelRot");
-			UI::TableNextColumn();
+			NextRow("RLWheelRot");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RLWheelRot", State.RLWheelRot, 0.0f, 1608.495f);
 
-			UI::TableNextRow();
-			UI::TableNextColumn();
-			UI::AlignTextToFramePadding();
-			UI::Text("RLWheelRotSpeed");
-			UI::TableNextColumn();
+			NextRow("RLWheelRotSpeed");
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat("##RLWheelRotSpeed", State.RLWheelRotSpeed, -1000.0f, 1000.0f);
 
