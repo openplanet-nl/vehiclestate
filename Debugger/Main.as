@@ -158,8 +158,7 @@ namespace VehicleDebugger
 				frontKph,
 				-1000.0f,
 				1000.0f,
-				Text::Format("%.3f", State.FrontSpeed) + " m/s      "
-					+ Text::Format("%.3f", frontKph) + " kph"
+				Text::Format("%.3f m/s      ", State.FrontSpeed) + Text::Format("%.3f kph", frontKph)
 			);
 
 			NextRow("Gas Pedal");
@@ -187,8 +186,7 @@ namespace VehicleDebugger
 				side,
 				-1000.0f,
 				1000.0f,
-				Text::Format("%.3f", side) + " m/s      "
-					+ Text::Format("%.3f", sideKph) + " kph"
+				Text::Format("%.3f m/s      ", side) + Text::Format("%.3f kph", sideKph)
 			);
 
 #if TMNEXT
@@ -383,8 +381,7 @@ namespace VehicleDebugger
 				velKph,
 				0.0f,
 				1000.0f,
-				Text::Format("%.3f", vel) + " m/s      "
-					+ Text::Format("%.3f", velKph) + " kph"
+				Text::Format("%.3f m/s      ", vel) + Text::Format("%.3f kph", velKph)
 			);
 
 			UI::TableNextRow();
