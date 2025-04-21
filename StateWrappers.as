@@ -57,7 +57,8 @@ shared abstract class CSceneVehicleVisStateInner
 	protected uint16 RR_ix = 2;
 	protected uint16 RL_ix = 3;
 
-	CSceneVehicleVisStateInner(CMwNod@ vis) {
+	CSceneVehicleVisStateInner(CMwNod@ vis)
+	{
 		@m_vis = vis;
 	}
 
@@ -126,7 +127,8 @@ shared abstract class CSceneVehicleVisStateInner
 #if MP4
 shared class CSceneVehicleVisState : CSceneVehicleVisStateInner
 {
-	CSceneVehicleVisState(CMwNod@ vis) {
+	CSceneVehicleVisState(CMwNod@ vis)
+	{
 		super(vis);
 		LocationOffset = 0x4E0;
 		WheelsStartOffset = 0x53C;
@@ -157,7 +159,8 @@ shared class CSceneVehicleVisState : CSceneVehicleVisStateInner
 #elif TURBO
 shared class CSceneVehicleVisState : CSceneVehicleVisStateInner
 {
-	CSceneVehicleVisState(CMwNod@ vis) {
+	CSceneVehicleVisState(CMwNod@ vis)
+	{
 		super(vis);
 		LocationOffset    = 0xA0;
 		WheelsStartOffset = 0xFC;
