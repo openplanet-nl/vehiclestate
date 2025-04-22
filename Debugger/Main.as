@@ -29,46 +29,48 @@ namespace VehicleDebugger
 
 	void TabViewingState()
 	{
-		auto Vis = VehicleState::ViewingPlayerVis();
-		if (Vis is null) {
+		auto vehicle = VehicleState::ViewingPlayerVis();
+		if (vehicle is null) {
 			UI::Text("\\$F00Missing vehicle vis");
 			return;
 		}
 
-		RenderVehicleState(Vis);
+		RenderVehicleState(vehicle);
 	}
 
 #if TMNEXT || MP4
 	void TabPlayerStates()
 	{
-		auto App = GetApp();
+		auto app = GetApp();
 
-		if (App.GameScene is null) {
+		auto pg = app.CurrentPlayground;
+
+		if (app.GameScene is null) {
 			UI::Text("\\$F00Not currently in a scene");
 			return;
 		}
 
-		for (uint i = 0; i < App.CurrentPlayground.Players.Length; i++) {
+		for (uint i = 0; i < pg.Players.Length; i++) {
 #if TMNEXT
-			auto Player = cast<CSmPlayer@>(App.CurrentPlayground.Players[i]);
+			auto player = cast<CSmPlayer@>(pg.Players[i]);
 #elif MP4
-			auto Player = cast<CTrackManiaPlayer@>(App.CurrentPlayground.Players[i]);
+			auto player = cast<CTrackManiaPlayer@>(pg.Players[i]);
 #endif
-			if (Player is null || Player.User is null)
+			if (player is null || player.User is null)
 				continue;
 
-			auto Vis = VehicleState::GetVis(App.GameScene, Player);
-			if (Vis is null)
+			auto vehicle = VehicleState::GetVis(app.GameScene, player);
+			if (vehicle is null)
 				continue;
 
-			UI::PushID(Player.User.Name);
+			UI::PushID(player.User.Name);
 
-			if (UI::CollapsingHeader(Player.User.Name)) {
+			if (UI::CollapsingHeader(player.User.Name)) {
 #if SIG_DEVELOPER
 				if (UI::Button("Explore Player nod"))
-					ExploreNod(Player.User.Name, Player);
+					ExploreNod(player.User.Name, player);
 #endif
-				RenderVehicleState(Vis);
+				RenderVehicleState(vehicle);
 			}
 
 			UI::PopID();
@@ -77,21 +79,21 @@ namespace VehicleDebugger
 
 	void TabAllStates()
 	{
-		auto App = GetApp();
-		if (App.GameScene is null) {
+		auto sceneVis = GetApp().GameScene;
+		if (sceneVis is null) {
 			UI::Text("\\$F00Not currently in a scene");
 			return;
 		}
 
-		auto allVis = VehicleState::GetAllVis(App.GameScene);
+		auto allVis = VehicleState::GetAllVis(sceneVis);
 		for (uint i = 0; i < allVis.Length; i++) {
-			auto Vis = allVis[i];
-			uint entityId = VehicleState::GetEntityId(Vis);
+			auto vis = allVis[i];
+			uint entityId = VehicleState::GetEntityId(vis);
 
 			UI::PushID(entityId);
 
 			if (UI::CollapsingHeader(Text::Format("%08x", entityId)))
-				RenderVehicleState(Vis);
+				RenderVehicleState(vis);
 
 			UI::PopID();
 		}
@@ -109,13 +111,13 @@ namespace VehicleDebugger
 	}
 
 #if MP4
-	void RenderVehicleState(CSceneVehicleVisState@ Vis)
+	void RenderVehicleState(CSceneVehicleVisState@ vis)
 #else
-	void RenderVehicleState(CSceneVehicleVis@ Vis)
+	void RenderVehicleState(CSceneVehicleVis@ vis)
 #endif
 	{
-		CSceneVehicleVisState@ State = Vis.AsyncState;
-		const uint entityId = VehicleState::GetEntityId(Vis);
+		CSceneVehicleVisState@ state = vis.AsyncState;
+		const uint entityId = VehicleState::GetEntityId(vis);
 
 		UI::PushID(entityId);
 
@@ -128,11 +130,11 @@ namespace VehicleDebugger
 #if DEVELOPER
 			if (Setting_DisplayMemoryButtons) {
 				NextRow("Explore Memory");
-				if (UI::Button("Vis##mem"))
-					ExploreMemory(Vis);
+				if (UI::Button("vis##mem"))
+					ExploreMemory(vis);
 				UI::SameLine();
 				if (UI::Button("State##mem"))
-					ExploreMemory(State);
+					ExploreMemory(state);
 			}
 #endif
 
@@ -145,40 +147,40 @@ namespace VehicleDebugger
 
 			NextRow("Brake Pedal");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##brakepedal", State.InputBrakePedal, 0.0f, 1.0f);
+			UI::SliderFloat("##brakepedal", state.InputBrakePedal, 0.0f, 1.0f);
 
 			NextRow("Braking");
-			UI::Checkbox("##braking", State.InputIsBraking);
+			UI::Checkbox("##braking", state.InputIsBraking);
 
 			NextRow("FrontSpeed");
-			const float frontKph = State.FrontSpeed * 3.6f;
+			const float frontKph = state.FrontSpeed * 3.6f;
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat(
 				"##front",
 				frontKph,
 				-1000.0f,
 				1000.0f,
-				Text::Format("%.3f m/s      ", State.FrontSpeed) + Text::Format("%.3f kph", frontKph)
+				Text::Format("%.3f m/s      ", state.FrontSpeed) + Text::Format("%.3f kph", frontKph)
 			);
 
 			NextRow("Gas Pedal");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##gaspedal", State.InputGasPedal, 0.0f, 1.0f);
+			UI::SliderFloat("##gaspedal", state.InputGasPedal, 0.0f, 1.0f);
 
 			NextRow("Gear");
 			UI::SetNextItemWidth(width);
-			UI::SliderInt("##gear", State.CurGear, 0, 7);
+			UI::SliderInt("##gear", state.CurGear, 0, 7);
 
 			NextRow("InputSteer");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##steer", State.InputSteer, -1.0f, 1.0f);
+			UI::SliderFloat("##steer", state.InputSteer, -1.0f, 1.0f);
 
 			NextRow("RPM");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##rpm", VehicleState::GetRPM(State), 0.0f, 11000.0f);
+			UI::SliderFloat("##rpm", VehicleState::GetRPM(state), 0.0f, 11000.0f);
 
 			NextRow("SideSpeed");
-			const float side = VehicleState::GetSideSpeed(State);
+			const float side = VehicleState::GetSideSpeed(state);
 			const float sideKph = side * 3.6f;
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat(
@@ -191,7 +193,7 @@ namespace VehicleDebugger
 
 #if TMNEXT
 			NextRow("Type");
-			UI::Text(tostring(VehicleState::GetVehicleType(State)));
+			UI::Text(tostring(VehicleState::GetVehicleType(state)));
 #endif
 
 			if (!Setting_DisplayExtendedInformation) {
@@ -210,17 +212,17 @@ namespace VehicleDebugger
 
 #if MP4 || TURBO
 			NextRow("ActiveEffects");
-			UI::Text(tostring(State.ActiveEffects));
+			UI::Text(tostring(state.ActiveEffects));
 #endif
 
 #if TMNEXT
 			NextRow("AirBrakeNormed");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##airbrake", State.AirBrakeNormed, 0.0f, 1.0f);
+			UI::SliderFloat("##airbrake", state.AirBrakeNormed, 0.0f, 1.0f);
 
 			NextRow("BulletTimeNormed");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##bullet", State.BulletTimeNormed, 0.0f, 1.0f);
+			UI::SliderFloat("##bullet", state.BulletTimeNormed, 0.0f, 1.0f);
 
 			NextRow("CamGrpStates");  // unknown type, changes when transforming vehicle
 			// UI::Text(tostring(State.CamGrpStates));  // crashes game
@@ -229,10 +231,10 @@ namespace VehicleDebugger
 				const Reflection::MwMemberInfo@ mem = cls.GetMember("CamGrpStates");
 				if (mem !is null && mem.Offset != 0xFFFF) {
 					UI::Text(
-						Text::Format("%2X ", Dev::GetOffsetUint8(State, mem.Offset))
-						+ Text::Format("%2X ", Dev::GetOffsetUint8(State, mem.Offset + 0x4))
-						+ Text::Format("%2X ", Dev::GetOffsetUint8(State, mem.Offset + 0x8))
-						+ Text::Format("%2X ", Dev::GetOffsetUint8(State, mem.Offset + 0xC))
+						Text::Format("%2X ", Dev::GetOffsetUint8(state, mem.Offset))
+						+ Text::Format("%2X ", Dev::GetOffsetUint8(state, mem.Offset + 0x4))
+						+ Text::Format("%2X ", Dev::GetOffsetUint8(state, mem.Offset + 0x8))
+						+ Text::Format("%2X ", Dev::GetOffsetUint8(state, mem.Offset + 0xC))
 					);
 				} else
 					UI::Text("\\F00No member info or no offset");
@@ -241,139 +243,139 @@ namespace VehicleDebugger
 
 			NextRow("CruiseDisplaySpeed");
 			UI::SetNextItemWidth(width);
-			UI::SliderInt("##cruise", VehicleState::GetCruiseDisplaySpeed(State), -1000, 1000);
+			UI::SliderInt("##cruise", VehicleState::GetCruiseDisplaySpeed(state), -1000, 1000);
 #endif
 
 			NextRow("Dir");
 			UI::SetNextItemWidth(width);
-			UI::InputFloat3("##dir", State.Dir);
+			UI::InputFloat3("##dir", state.Dir);
 
 #if TMNEXT
 			NextRow("DiscontinuityCount");
-			UI::Text(tostring(State.DiscontinuityCount));
+			UI::Text(tostring(state.DiscontinuityCount));
 
 			NextRow("EngineOn");
-			UI::Checkbox("##engine", State.EngineOn);
+			UI::Checkbox("##engine", state.EngineOn);
 #endif
 
 #if MP4
 			NextRow("GearPercent");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##GearPercent", State.GearPercent, 0.0f, 1.0f);
+			UI::SliderFloat("##GearPercent", state.GearPercent, 0.0f, 1.0f);
 #endif
 
 			NextRow("GroundDist");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##gnddist", State.GroundDist, 0.0f, 20.0f);
+			UI::SliderFloat("##gnddist", state.GroundDist, 0.0f, 20.0f);
 
 #if TMNEXT
 			NextRow("InputVertical");
-			UI::Text(Text::Format("%.3f", State.InputVertical));
+			UI::Text(Text::Format("%.3f", state.InputVertical));
 #endif
 
 			NextRow("IsGroundContact");
-			UI::Checkbox("##gndcontact", State.IsGroundContact);
+			UI::Checkbox("##gndcontact", state.IsGroundContact);
 
 #if TMNEXT
 			NextRow("IsReactorGroundMode");
-			UI::Checkbox("##reactgnd", State.IsReactorGroundMode);
+			UI::Checkbox("##reactgnd", state.IsReactorGroundMode);
 
 			NextRow("IsTopContact");
-			UI::Checkbox("##topcontact", State.IsTopContact);
+			UI::Checkbox("##topcontact", state.IsTopContact);
 
 			NextRow("IsTurbo");
-			UI::Checkbox("##isturbo", State.IsTurbo);
+			UI::Checkbox("##isturbo", state.IsTurbo);
 
 			NextRow("IsWheelsBurning");
-			UI::Checkbox("##burn", State.IsWheelsBurning);
+			UI::Checkbox("##burn", state.IsWheelsBurning);
 
 			NextRow("LastTurboLevel");
-			UI::Text(tostring(VehicleState::GetLastTurboLevel(State)));
+			UI::Text(tostring(VehicleState::GetLastTurboLevel(state)));
 #endif
 
 			NextRow("Left");
 			UI::SetNextItemWidth(width);
-			UI::InputFloat3("##left", State.Left);
+			UI::InputFloat3("##left", state.Left);
 
 			NextRow("Position");
 			UI::SetNextItemWidth(width);
-			UI::InputFloat3("##pos", State.Position);
+			UI::InputFloat3("##pos", state.Position);
 
 #if TMNEXT
 			NextRow("RaceStartTime");
-			UI::Text(tostring(State.RaceStartTime));
+			UI::Text(tostring(state.RaceStartTime));
 
 			NextRow("ReactorAirControl");
 			UI::SetNextItemWidth(width);
-			UI::InputFloat3("##reactair", State.ReactorAirControl);
+			UI::InputFloat3("##reactair", state.ReactorAirControl);
 
 			NextRow("ReactorBoostLvl");
-			UI::Text(tostring(State.ReactorBoostLvl));
+			UI::Text(tostring(state.ReactorBoostLvl));
 
 			NextRow("ReactorBoostType");
-			UI::Text(tostring(State.ReactorBoostType));
+			UI::Text(tostring(state.ReactorBoostType));
 
 			NextRow("ReactorFinalTimer");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##reactfinal", VehicleState::GetReactorFinalTimer(State), 0.0f, 1.0f);
+			UI::SliderFloat("##reactfinal", VehicleState::GetReactorFinalTimer(state), 0.0f, 1.0f);
 
 			NextRow("ReactorInputsX");
-			UI::Checkbox("##reactx", State.ReactorInputsX);
+			UI::Checkbox("##reactx", state.ReactorInputsX);
 
 			NextRow("SimulationTimeCoef");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##simtime", State.SimulationTimeCoef, 0.0f, 1.0f);
+			UI::SliderFloat("##simtime", state.SimulationTimeCoef, 0.0f, 1.0f);
 
 			NextRow("SpoilerOpenNormed");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##spoiler", State.SpoilerOpenNormed, 0.0f, 1.0f);
+			UI::SliderFloat("##spoiler", state.SpoilerOpenNormed, 0.0f, 1.0f);
 
 			NextRow("Turbo");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##turbo", Vis.Turbo, 0.0f, 1.0f);
+			UI::SliderFloat("##turbo", vis.Turbo, 0.0f, 1.0f);
 
 			NextRow("TurboTime");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##turbotime", State.TurboTime, 0.0f, 1.0f);
+			UI::SliderFloat("##turbotime", state.TurboTime, 0.0f, 1.0f);
 #endif
 
 #if MP4 || TURBO
 			NextRow("TurboActive");
-			UI::Checkbox("##TurboActive", State.TurboActive);
+			UI::Checkbox("##TurboActive", state.TurboActive);
 
 			NextRow("TurboPercent");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##TurboPercent", State.TurboPercent, 0.0f, 1.0f);
+			UI::SliderFloat("##TurboPercent", state.TurboPercent, 0.0f, 1.0f);
 #endif
 
 			NextRow("Up");
 			UI::SetNextItemWidth(width);
-			UI::InputFloat3("##up", State.Up);
+			UI::InputFloat3("##up", state.Up);
 
 #if TMNEXT
 			NextRow("WaterImmersionCoef");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##waterimm", State.WaterImmersionCoef, 0.0f, 1.0f);
+			UI::SliderFloat("##waterimm", state.WaterImmersionCoef, 0.0f, 1.0f);
 
 			NextRow("WaterOverSurfacePos");
 			UI::SetNextItemWidth(width);
-			UI::InputFloat3("##waterover", State.WaterOverSurfacePos);
+			UI::InputFloat3("##waterover", state.WaterOverSurfacePos);
 
 			NextRow("WetnessValue01");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##wetness", State.WetnessValue01, 0.0f, 1.0f);
+			UI::SliderFloat("##wetness", state.WetnessValue01, 0.0f, 1.0f);
 
 			NextRow("WingsOpenNormed");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##wings", State.WingsOpenNormed, 0.0f, 0.08f);
+			UI::SliderFloat("##wings", state.WingsOpenNormed, 0.0f, 0.08f);
 #endif
 
 			NextRow("WorldVel");
 			UI::SetNextItemWidth(width);
-			UI::InputFloat3("##worldvel", State.WorldVel);
+			UI::InputFloat3("##worldvel", state.WorldVel);
 
 			NextRow("WorldVel.Length");
-			const float vel = State.WorldVel.Length();
+			const float vel = state.WorldVel.Length();
 			const float velKph = vel * 3.6f;
 			UI::SetNextItemWidth(width);
 			UI::SliderFloat(
@@ -393,62 +395,62 @@ namespace VehicleDebugger
 #if TMNEXT
 			NextRow("FLBreakNormedCoef");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FLBreakNormedCoef", State.FLBreakNormedCoef, 0.0f, 1.0f);
+			UI::SliderFloat("##FLBreakNormedCoef", state.FLBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
 			NextRow("FLDamperLen");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FLDamperLen", State.FLDamperLen, 0.0f, 0.2f);
+			UI::SliderFloat("##FLDamperLen", state.FLDamperLen, 0.0f, 0.2f);
 
 #if TMNEXT
 			NextRow("FLDirt");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FLDirt", VehicleState::GetWheelDirt(State, 0), 0.0f, 1.0f);
+			UI::SliderFloat("##FLDirt", VehicleState::GetWheelDirt(state, 0), 0.0f, 1.0f);
 
 			NextRow("FLFalling");
-			UI::Text(tostring(VehicleState::GetWheelFalling(State, 0)));
+			UI::Text(tostring(VehicleState::GetWheelFalling(state, 0)));
 #endif
 
 #if MP4 || TURBO
 			NextRow("FLGroundContact");
-			UI::Checkbox("##FLGroundContact", State.FLGroundContact);
+			UI::Checkbox("##FLGroundContact", state.FLGroundContact);
 #endif
 
 			NextRow("FLGroundContactMaterial");
-			UI::Text(tostring(State.FLGroundContactMaterial));
+			UI::Text(tostring(state.FLGroundContactMaterial));
 
 #if TMNEXT
 			NextRow("FLIcing01");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FLIcing01", State.FLIcing01, 0.0f, 1.0f);
+			UI::SliderFloat("##FLIcing01", state.FLIcing01, 0.0f, 1.0f);
 #endif
 
 #if MP4
 			NextRow("FLIsWet");
-			UI::Checkbox("##FLIsWet", State.FLIsWet);
+			UI::Checkbox("##FLIsWet", state.FLIsWet);
 #endif
 
 			NextRow("FLSlipCoef");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FLSlipCoef", State.FLSlipCoef, 0.0f, 1.0f);
+			UI::SliderFloat("##FLSlipCoef", state.FLSlipCoef, 0.0f, 1.0f);
 
 			NextRow("FLSteerAngle");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FLSteerAngle", State.FLSteerAngle, -1.0f, 1.0f);
+			UI::SliderFloat("##FLSteerAngle", state.FLSteerAngle, -1.0f, 1.0f);
 
 #if TMNEXT
 			NextRow("FLTireWear01");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FLTireWear01", State.FLTireWear01, 0.0f, 1.0f);
+			UI::SliderFloat("##FLTireWear01", state.FLTireWear01, 0.0f, 1.0f);
 #endif
 
 			NextRow("FLWheelRot");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FLWheelRot", State.FLWheelRot, 0.0f, 1608.495f);
+			UI::SliderFloat("##FLWheelRot", state.FLWheelRot, 0.0f, 1608.495f);
 
 			NextRow("FLWheelRotSpeed");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FLWheelRotSpeed", State.FLWheelRotSpeed, -1000.0f, 1000.0f);
+			UI::SliderFloat("##FLWheelRotSpeed", state.FLWheelRotSpeed, -1000.0f, 1000.0f);
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
@@ -459,62 +461,62 @@ namespace VehicleDebugger
 #if TMNEXT
 			NextRow("FRBreakNormedCoef");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FRBreakNormedCoef", State.FRBreakNormedCoef, 0.0f, 1.0f);
+			UI::SliderFloat("##FRBreakNormedCoef", state.FRBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
 			NextRow("FRDamperLen");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FRDamperLen", State.FRDamperLen, 0.0f, 0.2f);
+			UI::SliderFloat("##FRDamperLen", state.FRDamperLen, 0.0f, 0.2f);
 
 #if TMNEXT
 			NextRow("FRDirt");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FRDirt", VehicleState::GetWheelDirt(State, 1), 0.0f, 1.0f);
+			UI::SliderFloat("##FRDirt", VehicleState::GetWheelDirt(state, 1), 0.0f, 1.0f);
 
 			NextRow("FRFalling");
-			UI::Text(tostring(VehicleState::GetWheelFalling(State, 1)));
+			UI::Text(tostring(VehicleState::GetWheelFalling(state, 1)));
 #endif
 
 #if MP4 || TURBO
 			NextRow("FRGroundContact");
-			UI::Checkbox("##FRGroundContact", State.FRGroundContact);
+			UI::Checkbox("##FRGroundContact", state.FRGroundContact);
 #endif
 
 			NextRow("FRGroundContactMaterial");
-			UI::Text(tostring(State.FRGroundContactMaterial));
+			UI::Text(tostring(state.FRGroundContactMaterial));
 
 #if TMNEXT
 			NextRow("FRIcing01");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FRIcing01", State.FRIcing01, 0.0f, 1.0f);
+			UI::SliderFloat("##FRIcing01", state.FRIcing01, 0.0f, 1.0f);
 #endif
 
 #if MP4
 			NextRow("FRIsWet");
-			UI::Checkbox("##FRIsWet", State.FRIsWet);
+			UI::Checkbox("##FRIsWet", state.FRIsWet);
 #endif
 
 			NextRow("FRSlipCoef");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FRSlipCoef", State.FRSlipCoef, 0.0f, 1.0f);
+			UI::SliderFloat("##FRSlipCoef", state.FRSlipCoef, 0.0f, 1.0f);
 
 			NextRow("FRSteerAngle");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FRSteerAngle", State.FRSteerAngle, -1.0f, 1.0f);
+			UI::SliderFloat("##FRSteerAngle", state.FRSteerAngle, -1.0f, 1.0f);
 
 #if TMNEXT
 			NextRow("FRTireWear01");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FRTireWear01", State.FRTireWear01, 0.0f, 1.0f);
+			UI::SliderFloat("##FRTireWear01", state.FRTireWear01, 0.0f, 1.0f);
 #endif
 
 			NextRow("FRWheelRot");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FRWheelRot", State.FRWheelRot, 0.0f, 1608.495f);
+			UI::SliderFloat("##FRWheelRot", state.FRWheelRot, 0.0f, 1608.495f);
 
 			NextRow("FRWheelRotSpeed");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##FRWheelRotSpeed", State.FRWheelRotSpeed, -1000.0f, 1000.0f);
+			UI::SliderFloat("##FRWheelRotSpeed", state.FRWheelRotSpeed, -1000.0f, 1000.0f);
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
@@ -525,62 +527,62 @@ namespace VehicleDebugger
 #if TMNEXT
 			NextRow("RRBreakNormedCoef");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RRBreakNormedCoef", State.RRBreakNormedCoef, 0.0f, 1.0f);
+			UI::SliderFloat("##RRBreakNormedCoef", state.RRBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
 			NextRow("RRDamperLen");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RRDamperLen", State.RRDamperLen, 0.0f, 0.2f);
+			UI::SliderFloat("##RRDamperLen", state.RRDamperLen, 0.0f, 0.2f);
 
 #if TMNEXT
 			NextRow("RRDirt");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RRDirt", VehicleState::GetWheelDirt(State, 3), 0.0f, 1.0f);
+			UI::SliderFloat("##RRDirt", VehicleState::GetWheelDirt(state, 3), 0.0f, 1.0f);
 
 			NextRow("RRFalling");
-			UI::Text(tostring(VehicleState::GetWheelFalling(State, 3)));
+			UI::Text(tostring(VehicleState::GetWheelFalling(state, 3)));
 #endif
 
 #if MP4 || TURBO
 			NextRow("RRGroundContact");
-			UI::Checkbox("##RRGroundContact", State.RRGroundContact);
+			UI::Checkbox("##RRGroundContact", state.RRGroundContact);
 #endif
 
 			NextRow("RRGroundContactMaterial");
-			UI::Text(tostring(State.RRGroundContactMaterial));
+			UI::Text(tostring(state.RRGroundContactMaterial));
 
 #if TMNEXT
 			NextRow("RRIcing01");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RRIcing01", State.RRIcing01, 0.0f, 1.0f);
+			UI::SliderFloat("##RRIcing01", state.RRIcing01, 0.0f, 1.0f);
 #endif
 
 #if MP4
 			NextRow("RRIsWet");
-			UI::Checkbox("##RRIsWet", State.RRIsWet);
+			UI::Checkbox("##RRIsWet", state.RRIsWet);
 #endif
 
 			NextRow("RRSlipCoef");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RRSlipCoef", State.RRSlipCoef, 0.0f, 1.0f);
+			UI::SliderFloat("##RRSlipCoef", state.RRSlipCoef, 0.0f, 1.0f);
 
 			NextRow("RRSteerAngle");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RRSteerAngle", State.RRSteerAngle, -1.0f, 1.0f);
+			UI::SliderFloat("##RRSteerAngle", state.RRSteerAngle, -1.0f, 1.0f);
 
 #if TMNEXT
 			NextRow("RRTireWear01");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RRTireWear01", State.RRTireWear01, 0.0f, 1.0f);
+			UI::SliderFloat("##RRTireWear01", state.RRTireWear01, 0.0f, 1.0f);
 #endif
 
 			NextRow("RRWheelRot");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RRWheelRot", State.RRWheelRot, 0.0f, 1608.495f);
+			UI::SliderFloat("##RRWheelRot", state.RRWheelRot, 0.0f, 1608.495f);
 
 			NextRow("RRWheelRotSpeed");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RRWheelRotSpeed", State.RRWheelRotSpeed, -1000.0f, 1000.0f);
+			UI::SliderFloat("##RRWheelRotSpeed", state.RRWheelRotSpeed, -1000.0f, 1000.0f);
 
 			UI::TableNextRow();
 			UI::TableNextColumn();
@@ -591,62 +593,62 @@ namespace VehicleDebugger
 #if TMNEXT
 			NextRow("RLBreakNormedCoef");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RLBreakNormedCoef", State.RLBreakNormedCoef, 0.0f, 1.0f);
+			UI::SliderFloat("##RLBreakNormedCoef", state.RLBreakNormedCoef, 0.0f, 1.0f);
 #endif
 
 			NextRow("RLDamperLen");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RLDamperLen", State.RLDamperLen, 0.0f, 0.2f);
+			UI::SliderFloat("##RLDamperLen", state.RLDamperLen, 0.0f, 0.2f);
 
 #if TMNEXT
 			NextRow("RLDirt");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RLDirt", VehicleState::GetWheelDirt(State, 2), 0.0f, 1.0f);
+			UI::SliderFloat("##RLDirt", VehicleState::GetWheelDirt(state, 2), 0.0f, 1.0f);
 
 			NextRow("RLFalling");
-			UI::Text(tostring(VehicleState::GetWheelFalling(State, 2)));
+			UI::Text(tostring(VehicleState::GetWheelFalling(state, 2)));
 #endif
 
 #if MP4 || TURBO
 			NextRow("RLGroundContact");
-			UI::Checkbox("##RLGroundContact", State.RLGroundContact);
+			UI::Checkbox("##RLGroundContact", state.RLGroundContact);
 #endif
 
 			NextRow("RLGroundContactMaterial");
-			UI::Text(tostring(State.RLGroundContactMaterial));
+			UI::Text(tostring(state.RLGroundContactMaterial));
 
 #if TMNEXT
 			NextRow("RLIcing01");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RLIcing01", State.RLIcing01, 0.0f, 1.0f);
+			UI::SliderFloat("##RLIcing01", state.RLIcing01, 0.0f, 1.0f);
 #endif
 
 #if MP4
 			NextRow("RLIsWet");
-			UI::Checkbox("##RLIsWet", State.RLIsWet);
+			UI::Checkbox("##RLIsWet", state.RLIsWet);
 #endif
 
 			NextRow("RLSlipCoef");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RLSlipCoef", State.RLSlipCoef, 0.0f, 1.0f);
+			UI::SliderFloat("##RLSlipCoef", state.RLSlipCoef, 0.0f, 1.0f);
 
 			NextRow("RLSteerAngle");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RLSteerAngle", State.RLSteerAngle, -1.0f, 1.0f);
+			UI::SliderFloat("##RLSteerAngle", state.RLSteerAngle, -1.0f, 1.0f);
 
 #if TMNEXT
 			NextRow("RLTireWear01");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RLTireWear01", State.RLTireWear01, 0.0f, 1.0f);
+			UI::SliderFloat("##RLTireWear01", state.RLTireWear01, 0.0f, 1.0f);
 #endif
 
 			NextRow("RLWheelRot");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RLWheelRot", State.RLWheelRot, 0.0f, 1608.495f);
+			UI::SliderFloat("##RLWheelRot", state.RLWheelRot, 0.0f, 1608.495f);
 
 			NextRow("RLWheelRotSpeed");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##RLWheelRotSpeed", State.RLWheelRotSpeed, -1000.0f, 1000.0f);
+			UI::SliderFloat("##RLWheelRotSpeed", state.RLWheelRotSpeed, -1000.0f, 1000.0f);
 
 			UI::EndDisabled();
 			UI::PopStyleColor();
