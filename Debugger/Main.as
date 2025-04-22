@@ -45,7 +45,8 @@ namespace VehicleDebugger
 
 		auto pg = app.CurrentPlayground;
 
-		if (app.GameScene is null) {
+		auto sceneVis = app.GameScene;
+		if (sceneVis is null) {
 			UI::Text("\\$F00Not currently in a scene");
 			return;
 		}
@@ -60,7 +61,7 @@ namespace VehicleDebugger
 				continue;
 			}
 
-			auto vehicle = VehicleState::GetVis(app.GameScene, player);
+			auto vehicle = VehicleState::GetVis(sceneVis, player);
 			if (vehicle is null) {
 				continue;
 			}
