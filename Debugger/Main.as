@@ -53,9 +53,9 @@ namespace VehicleDebugger
 
 		for (uint i = 0; i < pg.Players.Length; i++) {
 #if TMNEXT
-			auto player = cast<CSmPlayer@>(pg.Players[i]);
+			auto player = cast<CSmPlayer>(pg.Players[i]);
 #elif MP4
-			auto player = cast<CTrackManiaPlayer@>(pg.Players[i]);
+			auto player = cast<CTrackManiaPlayer>(pg.Players[i]);
 #endif
 			if (player is null || player.User is null) {
 				continue;
