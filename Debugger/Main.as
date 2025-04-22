@@ -56,19 +56,22 @@ namespace VehicleDebugger
 #elif MP4
 			auto player = cast<CTrackManiaPlayer@>(pg.Players[i]);
 #endif
-			if (player is null || player.User is null)
+			if (player is null || player.User is null) {
 				continue;
+			}
 
 			auto vehicle = VehicleState::GetVis(app.GameScene, player);
-			if (vehicle is null)
+			if (vehicle is null) {
 				continue;
+			}
 
 			UI::PushID(player.User.Name);
 
 			if (UI::CollapsingHeader(player.User.Name)) {
 #if SIG_DEVELOPER
-				if (UI::Button("Explore Player nod"))
+				if (UI::Button("Explore Player nod")) {
 					ExploreNod(player.User.Name, player);
+				}
 #endif
 				RenderVehicleState(vehicle);
 			}
@@ -92,8 +95,9 @@ namespace VehicleDebugger
 
 			UI::PushID(entityId);
 
-			if (UI::CollapsingHeader(Text::Format("%08x", entityId)))
+			if (UI::CollapsingHeader(Text::Format("%08x", entityId))) {
 				RenderVehicleState(vis);
+			}
 
 			UI::PopID();
 		}
@@ -111,13 +115,13 @@ namespace VehicleDebugger
 	}
 
 #if MP4
-	void RenderVehicleState(CSceneVehicleVisState@ vis)
+	void RenderVehicleState(CSceneVehicleVisState@ vehicle)
 #else
-	void RenderVehicleState(CSceneVehicleVis@ vis)
+	void RenderVehicleState(CSceneVehicleVis@ vehicle)
 #endif
 	{
-		CSceneVehicleVisState@ state = vis.AsyncState;
-		const uint entityId = VehicleState::GetEntityId(vis);
+		CSceneVehicleVisState@ state = vehicle.AsyncState;
+		const uint entityId = VehicleState::GetEntityId(vehicle);
 
 		UI::PushID(entityId);
 
@@ -130,11 +134,13 @@ namespace VehicleDebugger
 #if DEVELOPER
 			if (Setting_DisplayMemoryButtons) {
 				NextRow("Explore Memory");
-				if (UI::Button("vis##mem"))
-					ExploreMemory(vis);
+				if (UI::Button("vis##mem")) {
+					ExploreMemory(vehicle);
+				}
 				UI::SameLine();
-				if (UI::Button("State##mem"))
+				if (UI::Button("State##mem")) {
 					ExploreMemory(state);
+				}
 			}
 #endif
 
@@ -236,10 +242,12 @@ namespace VehicleDebugger
 						+ Text::Format("%2X ", Dev::GetOffsetUint8(state, mem.Offset + 0x8))
 						+ Text::Format("%2X ", Dev::GetOffsetUint8(state, mem.Offset + 0xC))
 					);
-				} else
+				} else {
 					UI::Text("\\F00No member info or no offset");
-			} else
+				}
+			} else {
 				UI::Text("\\F00No class info");
+			}
 
 			NextRow("CruiseDisplaySpeed");
 			UI::SetNextItemWidth(width);
@@ -332,7 +340,7 @@ namespace VehicleDebugger
 
 			NextRow("Turbo");
 			UI::SetNextItemWidth(width);
-			UI::SliderFloat("##turbo", vis.Turbo, 0.0f, 1.0f);
+			UI::SliderFloat("##turbo", vehicle.Turbo, 0.0f, 1.0f);
 
 			NextRow("TurboTime");
 			UI::SetNextItemWidth(width);
@@ -662,7 +670,8 @@ namespace VehicleDebugger
 void RenderInterface()
 {
 #if SIG_DEVELOPER
-	if (Setting_DisplayDebugger && GetApp().CurrentPlayground !is null)
+	if (Setting_DisplayDebugger && GetApp().CurrentPlayground !is null) {
 		VehicleDebugger::Render();
+	}
 #endif
 }
