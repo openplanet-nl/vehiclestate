@@ -1,10 +1,8 @@
-[Setting category="Debug" name="Display debugger window" description="Displays information about vehicle states."]
+[Setting category="Debug" name="Display debugger window" description="Displays information about vehicle states. Does nothing if not in developer mode."]
 bool Setting_DisplayDebugger = false;
 
-#if TMNEXT || MP4
-[Setting category="Debug" name="Display extended information"]
+[Setting category="Debug" name="Display extended information" if="Setting_DisplayDebugger"]
 bool Setting_DisplayExtendedInformation = false;
-#endif
 
 #if DEVELOPER
 [Setting category="Debug" name="Display memory buttons"]
