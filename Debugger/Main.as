@@ -128,6 +128,7 @@ namespace VehicleDebugger
 
 		if (UI::BeginTable("##debug-state", 2, UI::TableFlags::RowBg | UI::TableFlags::ScrollY)) {
 			UI::PushStyleColor(UI::Col::TableRowBgAlt, vec4(vec3(), 0.5f));
+			UI::PushStyleVar(UI::StyleVar::DisabledAlpha, 1.0f);
 
 			UI::TableSetupColumn("name", UI::TableColumnFlags::WidthFixed);
 			UI::TableSetupColumn("value");
@@ -215,6 +216,7 @@ namespace VehicleDebugger
 
 			if (!Setting_DisplayExtendedInformation) {
 				UI::EndDisabled();
+				UI::PopStyleVar();
 				UI::PopStyleColor();
 				UI::EndTable();
 				UI::PopID();
@@ -670,6 +672,7 @@ namespace VehicleDebugger
 			UI::SliderFloat("##RLWheelRotSpeed", state.RLWheelRotSpeed, -1000.0f, 1000.0f);
 
 			UI::EndDisabled();
+			UI::PopStyleVar();
 			UI::PopStyleColor();
 			UI::EndTable();
 		}
