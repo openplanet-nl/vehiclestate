@@ -135,13 +135,23 @@ namespace VehicleDebugger
 #if DEVELOPER
 			if (Setting_DisplayMemoryButtons) {
 				NextRow("Explore Memory");
-				if (UI::Button("vis##mem")) {
+#if FOREVER
+				if (UI::Button("Player##mem")) {
+					ExploreMemory(vehicle.m_mobil);
+				}
+				UI::SameLine();
+				if (UI::Button("Car##mem")) {
+					ExploreMemory(vehicle.m_car);
+				}
+#else
+				if (UI::Button("Vis##mem")) {
 					ExploreMemory(vehicle);
 				}
 				UI::SameLine();
 				if (UI::Button("State##mem")) {
 					ExploreMemory(state);
 				}
+#endif
 			}
 #endif
 

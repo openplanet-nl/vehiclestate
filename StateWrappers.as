@@ -26,7 +26,7 @@ namespace VehicleState
 		CarDesert
 	}
 
-#elif MP4 || TURBO
+#elif MP4 || TURBO || FOREVER
 	shared enum EffectFlags {
 		FreeWheeling = 1,
 #if MP4
@@ -178,5 +178,92 @@ shared class CSceneVehicleVisState : CSceneVehicleVisStateInner
 	float get_TurboPercent()            { if (m_vis is null) return 0.0f;  return Dev::GetOffsetFloat(m_vis, 0x1A4); }
 	// Binary OR of `VehicleState::EffectFlags`, only engine off
 	uint  get_ActiveEffects()           { if (m_vis is null) return 0;     return Dev::GetOffsetUint32(m_vis, 0x1B8); }
+}
+
+#elif FOREVER
+shared class CSceneVehicleVisState
+{
+	CSceneVehicleCar@ m_car;
+	uint m_offsetState = 0x2F8;
+	uint m_offsetEngine = 0x59C;
+
+	CSceneVehicleVisState(CSceneVehicleCar@ car)
+	{
+		@m_car = car;
+	}
+
+	int GetWheelCount()                    { if (m_car is null) return 0; return Dev::GetOffsetInt32(m_car, 0x2E8); }
+	IntPtr GetWheel(int index)             { if (m_car is null) return 0; return Dev::GetOffsetUint32(m_car, 0x2EC) + index * 0x2FC; }
+	float GetWheelDamperLen(int index)     { if (m_car is null) return 0.0f; return Dev::ReadFloat(GetWheel(index) + 0xB4); }
+	float GetWheelRot(int index)           { if (m_car is null) return 0.0f; return Dev::ReadFloat(GetWheel(index) + 0x150); }
+	float GetWheelRotSpeed(int index)      { if (m_car is null) return 0.0f; return Dev::ReadFloat(GetWheel(index) + 0x120); }
+	float GetWheelSteerAngle(int index)    { if (m_car is null) return 0.0f; return Dev::ReadFloat(GetWheel(index) + 0x154); }
+	float GetWheelSlipCoef(int index)      { return 0.0f; } //TODO: Couldn't find this very quickly
+	bool  GetWheelGroundContact(int index) { if (m_car is null) return false; return Dev::ReadUint32(GetWheel(index) + 0x124) == 1; }
+	CAudioSoundSurface::ESurfId GetWheelGroundContactMaterial(int index) {
+		if (m_car is null) return CAudioSoundSurface::ESurfId(0);
+		return CAudioSoundSurface::ESurfId(Dev::ReadUint16(GetWheel(0) + 0x128));
+	}
+
+	uint get_EntityId() { return 0; } //TODO
+
+	float get_GroundDist()      {                                                        return 0.0f; }
+	bool  get_InputIsBraking()  {                                                        return InputBrakePedal > 0.0f; }
+	iso4  get_Location()        { if (m_car is null) return iso4();                      return Dev::GetOffsetIso4(m_car, m_offsetState + 0x34); }
+	vec3  get_Left()            { if (m_car is null) return vec3(); iso4 loc = Location; return vec3(loc.xx, loc.yx, loc.zx); }
+	vec3  get_Up()              { if (m_car is null) return vec3(); iso4 loc = Location; return vec3(loc.xy, loc.yy, loc.zy); }
+	vec3  get_Dir()             { if (m_car is null) return vec3(); iso4 loc = Location; return vec3(loc.xz, loc.yz, loc.zz); }
+	vec3  get_Position()        { if (m_car is null) return vec3();                      return Dev::GetOffsetVec3(m_car, m_offsetState + 0x58); }
+	vec3  get_WorldVel()        { if (m_car is null) return vec3();                      return Dev::GetOffsetVec3(m_car, m_offsetState + 0x6C); }
+
+	float get_InputSteer()      { if (m_car is null) return 0.0f;  return Dev::GetOffsetFloat(m_car, m_offsetState + 0x8); }
+	float get_InputGasPedal()   { if (m_car is null) return 0.0f;  return Dev::GetOffsetFloat(m_car, m_offsetState + 0xC); }
+	float get_InputBrakePedal() { if (m_car is null) return 0.0f;  return Dev::GetOffsetFloat(m_car, m_offsetState + 0x10); }
+	float get_FrontSpeed()      { if (m_car is null) return 0.0f;  return Dev::GetOffsetFloat(m_car, m_offsetState + 0x78); }
+	float get_SideSpeed()       { return 0.0f; }
+	bool  get_IsGroundContact() { if (m_car is null) return false; return Dev::GetOffsetUint32(m_car, m_offsetState + 0x90) == 1; }
+	float get_RPM()             { if (m_car is null) return 0.0f;  return Dev::GetOffsetFloat(m_car, m_offsetEngine + 0x18); }
+	uint  get_CurGear()         { if (m_car is null) return 0;     return Dev::GetOffsetUint32(m_car, m_offsetEngine + 0x2C); }
+	// Binary OR of `VehicleState::EffectFlags`, only engine off
+	uint  get_ActiveEffects()   { if (m_car is null) return 0;     return Dev::GetOffsetUint32(m_car, 0x60C); }
+	bool  get_TurboActive()     { if (m_car is null) return false; return Dev::GetOffsetUint32(m_car, 0x600) == 1; }
+	float get_TurboPercent()    { if (m_car is null) return 0.0f;  return Dev::GetOffsetFloat(m_car, 0x5F4); } // this is probably wrong, but plugins don't use it
+	float get_GearPercent()     { return 0.0f; } // plugins don't use it
+
+	// FRONT-LEFT
+	float get_FLDamperLen()     { return GetWheelDamperLen(0); }
+	float get_FLWheelRot()      { return GetWheelRot(0); }
+	float get_FLWheelRotSpeed() { return GetWheelRotSpeed(0); }
+	float get_FLSteerAngle()    { return GetWheelSteerAngle(0); }
+	float get_FLSlipCoef()      { return GetWheelSlipCoef(0); }
+	bool  get_FLGroundContact() { return GetWheelGroundContact(0); }
+	CAudioSoundSurface::ESurfId get_FLGroundContactMaterial() { return GetWheelGroundContactMaterial(0); }
+
+	// FRONT-RIGHT
+	float get_FRDamperLen()     { return GetWheelDamperLen(1); }
+	float get_FRWheelRot()      { return GetWheelRot(1); }
+	float get_FRWheelRotSpeed() { return GetWheelRotSpeed(1); }
+	float get_FRSteerAngle()    { return GetWheelSteerAngle(1); }
+	float get_FRSlipCoef()      { return GetWheelSlipCoef(1); }
+	bool  get_FRGroundContact() { return GetWheelGroundContact(1); }
+	CAudioSoundSurface::ESurfId get_FRGroundContactMaterial() { return GetWheelGroundContactMaterial(1); }
+
+	// REAR-RIGHT
+	float get_RRDamperLen()     { return GetWheelDamperLen(2); }
+	float get_RRWheelRot()      { return GetWheelRot(2); }
+	float get_RRWheelRotSpeed() { return GetWheelRotSpeed(2); }
+	float get_RRSteerAngle()    { return GetWheelSteerAngle(2); }
+	float get_RRSlipCoef()      { return GetWheelSlipCoef(2); }
+	bool  get_RRGroundContact() { return GetWheelGroundContact(2); }
+	CAudioSoundSurface::ESurfId get_RRGroundContactMaterial() { return GetWheelGroundContactMaterial(2); }
+
+	// REAR-LEFT
+	float get_RLDamperLen()     { return GetWheelDamperLen(3); }
+	float get_RLWheelRot()      { return GetWheelRot(3); }
+	float get_RLWheelRotSpeed() { return GetWheelRotSpeed(3); }
+	float get_RLSteerAngle()    { return GetWheelSteerAngle(3); }
+	float get_RLSlipCoef()      { return GetWheelSlipCoef(3); }
+	bool  get_RLGroundContact() { return GetWheelGroundContact(3); }
+	CAudioSoundSurface::ESurfId get_RLGroundContactMaterial() { return GetWheelGroundContactMaterial(3); }
 }
 #endif

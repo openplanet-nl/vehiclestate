@@ -27,6 +27,15 @@ namespace VehicleState
 		}
 		return playground.GameTerminals[0].GUIPlayer;
 	}
+#elif FOREVER
+	CGameMobil@ GetViewingPlayer()
+	{
+		auto playground = cast<CTrackManiaRace>(GetApp().CurrentPlayground);
+		if (playground is null) {
+			return null;
+		}
+		return playground.LocalPlayerMobil;
+	}
 #endif
 
 #if MP4
