@@ -7,7 +7,8 @@ namespace VehicleState
 	// - 2022-03-31: 12
 	// - 2022-07-08: 11
 	// - 2023-03-03: 12
-	uint VehiclesManagerIndex = 12;
+	// - 2025-09-26: 13
+	uint VehiclesManagerIndex = 13;
 	// -        ...: 0x1C8
 	// - 2023-03-03: 0x1E0
 	// - 2023-12-21: 0x210
