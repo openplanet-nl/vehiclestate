@@ -1,13 +1,22 @@
 namespace VehicleState
 {
 #if TMNEXT
-	CSmPlayer@ GetViewingPlayer()
+	CGameTerminal@ GetGameTerminal()
 	{
 		auto playground = GetApp().CurrentPlayground;
 		if (playground is null || playground.GameTerminals.Length != 1) {
 			return null;
 		}
-		return cast<CSmPlayer>(playground.GameTerminals[0].GUIPlayer);
+		return playground.GameTerminals[0];
+	}
+
+	CSmPlayer@ GetViewingPlayer()
+	{
+		auto gameTerminal = GetGameTerminal();
+		if (gameTerminal is null) {
+			return null;
+		}
+		return cast<CSmPlayer>(gameTerminal.GUIPlayer);
 	}
 #elif TURBO
 	CGameMobil@ GetViewingPlayer()

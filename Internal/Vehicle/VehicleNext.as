@@ -102,6 +102,64 @@ namespace VehicleState
 		return Dev::ForceCast<CSceneVehicleVis@>(nodVehicle).Get();
 	}
 
+	// Get the vehicle vis being viewed. Could be a player or a ghost.
+	CSceneVehicleVis@ GetViewingVis(ISceneVis@ sceneVis)
+	{
+		auto gameTerminal = GetGameTerminal();
+		if (gameTerminal !is null) {
+			auto player = cast<CSmPlayer>(gameTerminal.GUIPlayer);
+			if (player !is null) {
+				return GetVis(sceneVis, player);
+			}
+		}
+
+		auto vehicleVisMgr = SceneVis::GetManager(sceneVis, VehiclesManagerIndex); // NSceneVehicleVis_SMgr
+		if (vehicleVisMgr is null) {
+			return null;
+		}
+
+		if (!CheckValidVehicles(vehicleVisMgr)) {
+			return null;
+		}
+
+		auto vehiclesCount = Dev::GetOffsetUint32(vehicleVisMgr, VehiclesOffset + 0x8);
+		switch (vehiclesCount) {
+			case 0:
+				return null;
+
+			case 1: {
+				auto vehicles = Dev::GetOffsetNod(vehicleVisMgr, VehiclesOffset);
+				auto nodVehicle = Dev::GetOffsetNod(vehicles, 0);
+				return Dev::ForceCast<CSceneVehicleVis@>(nodVehicle).Get();
+			}
+
+			default: {
+				auto gameTerminal = GetGameTerminal();
+				if (gameTerminal !is null) {
+					auto isViewingGhost = Dev::GetOffsetUint32(gameTerminal, Internal::OffsetIsViewingGhost) == 1;
+					if (isViewingGhost) {
+						auto viewingEntityId = Dev::GetOffsetUint32(gameTerminal, Internal::OffsetViewingEntityId);
+						if (viewingEntityId & 0x04000000 > 0) {
+							return GetVisFromId(sceneVis, viewingEntityId);
+						}
+					}
+				}
+
+				return null;
+			}
+		}
+	}
+
+	// Get the vehicle vis state being viewed. Could be a player or a ghost.
+	CSceneVehicleVisState@ GetViewingVisState(ISceneVis@ sceneVis)
+	{
+		auto vis = GetViewingVis(sceneVis);
+		if (vis is null) {
+			return null;
+		}
+		return vis.AsyncState;
+	}
+
 	// Get all vehicle vis states. Mostly used for debugging.
 	array<CSceneVehicleVis@> GetAllVis(ISceneVis@ sceneVis)
 	{
@@ -261,6 +319,9 @@ namespace VehicleState
 		int16 OffsetReactorFinalTimer = 0;
 		int16 OffsetCruiseDisplaySpeed = 0;
 		int16 OffsetVehicleType = 0;
+
+		int16 OffsetIsViewingGhost = 0;
+		int16 OffsetViewingEntityId = 0;
 
 		MwId IdCharacterPilot;
 		MwId IdCarSport;

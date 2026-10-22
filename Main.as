@@ -36,5 +36,13 @@ void Main()
 	} else {
 		error("Unable to find reflection info for CSceneVehicleVisState!");
 	}
+
+	auto typeGameTerminal = Reflection::GetType("CGameTerminal");
+	if (typeGameTerminal !is null) {
+		VehicleState::Internal::OffsetIsViewingGhost = FindRelativeOffset(typeGameTerminal, "MediaAmbianceClipPlayer", +0x68);
+		VehicleState::Internal::OffsetViewingEntityId = FindRelativeOffset(typeGameTerminal, "MediaAmbianceClipPlayer", +0x6C);
+	} else {
+		error("Unable to find reflection info for CGameTerminal!");
+	}
 #endif
 }

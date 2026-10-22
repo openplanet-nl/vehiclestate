@@ -13,7 +13,7 @@ namespace SceneVis
 	CMwNod@ GetManager(ISceneVis@ sceneVis, uint index)
 	{
 		uint managerCount = Dev::GetOffsetUint32(sceneVis, 0x8);
-		if (index > managerCount) {
+		if (index >= managerCount) {
 			error("Index out of range: there are only " + managerCount + " managers");
 			return null;
 		}
