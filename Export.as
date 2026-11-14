@@ -65,6 +65,7 @@ namespace VehicleState
 
 	// Get all vehicle vis states. Mostly used for debugging.
 	import array<CSceneVehicleVis@> GetAllVis(ISceneVis@ sceneVis) from "VehicleState";
+
 #elif MP4
 	// Get vehicle vis from a given player.
 	import CSceneVehicleVisState@ GetVis(CGameScene@ sceneVis, CGamePlayer@ player) from "VehicleState";
@@ -74,5 +75,11 @@ namespace VehicleState
 
 	// Get all vehicle vis states. Mostly used for debugging.
 	import array<CSceneVehicleVisState@> GetAllVis(CGameScene@ sceneVis) from "VehicleState";
+
+	// Get the entity ID of the vis state being viewed.
+	import uint GetViewingVisId() from "VehicleState";
+
+	// Get the vehicle vis state with the given entity ID.
+	import CSceneVehicleVisState@ GetVisFromId(uint VisId) from "VehicleState";
 #endif
 }

@@ -70,7 +70,7 @@ namespace VehicleState
 		return Dev::GetOffsetUint32(cam, 0xd4);
 	}
 
-	CSceneVehicleVisInner@ GetVisWithId(uint VisId)
+	CSceneVehicleVisInner@ GetVisInnerFromId(uint VisId)
 	{
 		auto mgr = SceneVis::GetVehicleVisManager(GetApp().GameScene);
 		if (mgr is null || !CheckValidVehicles(mgr)) {
@@ -85,6 +85,12 @@ namespace VehicleState
 			}
 		}
 		return null;
+	}
+
+	CSceneVehicleVisState@ GetVisFromId(uint VisId)
+	{
+		auto inner = GetVisInnerFromId(VisId);
+		return inner !is null ? inner.AsyncState : null;
 	}
 
 	uint GetVisCount(CSceneMgrVehicleVisImpl@ mgr)
