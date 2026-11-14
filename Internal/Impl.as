@@ -58,7 +58,7 @@ namespace VehicleState
 #endif
 
 #if MP4
-		auto visInner = GetVisWithId(GetViewingVisId());
+		auto visInner = GetVisFromId(GetViewingVisId());
 		if (visInner !is null) {
 			@vis = visInner.AsyncState;
 		}
