@@ -87,6 +87,12 @@ namespace VehicleState
 		return null;
 	}
 
+	CSceneVehicleVisState@ GetVisStateFromId(uint VisId)
+	{
+		auto inner = GetVisFromId(VisId);
+		return inner !is null ? inner.AsyncState : null;
+	}
+
 	uint GetVisCount(CSceneMgrVehicleVisImpl@ mgr)
 	{
 		auto count = Dev::GetOffsetUint32(mgr, VehiclesOffset + 0x8);
